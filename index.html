@@ -25,9 +25,14 @@
         .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 13px; }
         .item-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #252525; padding: 6px 0; font-size: 13px; }
         .btn-danger { background: #c62828; color: #fff; }
+        .btn-blue { background: #1976d2; color: #fff; }
         #stage-selector { display: flex; flex-direction: column; gap: 6px; }
         #stage-selector button { text-align: left; padding: 8px 10px; }
         #stage-selector button.active { background: #ffd700; color: #000; }
+        .buy-amount-btns { display: flex; gap: 4px; margin-bottom: 12px; justify-content: center; }
+        .buy-amount-btns button { flex: 1; padding: 6px 0; font-size: 12px; background: #333; color: #ccc; }
+        .buy-amount-btns button.active { background: #ffd700; color: #000; }
+        .power-display { text-align: center; font-size: 16px; font-weight: bold; color: #ffd700; margin: 8px 0; padding: 8px; background: #222; border-radius: 6px; }
     </style>
 </head>
 <body>
@@ -38,6 +43,10 @@
     <!-- 📊 総合能力値 -->
     <div class="status-box">
         <h3>📊 総合能力値</h3>
+        <div class="power-display">
+            総合力: <span id="total-power">0</span>
+            <div style="font-size: 12px; color: #aaa; margin-top: 4px;">ベスト: <span id="best-power">0</span></div>
+        </div>
         <div class="grid-2">
             <div>💰 所持金: <span id="gold">0</span> G</div>
             <div>💎 魂の結晶: <span id="crystal">0</span> 個</div>
@@ -48,6 +57,7 @@
             <div>🔥 会心倍率: <span id="stat-crit-dmg">150</span>%</div>
             <div>💚 自動回復: <span id="total-regen">2</span></div>
             <div>⏳ 回復速度: <span id="regen-speed">1.00</span> s</div>
+            <div>⚡ 攻撃速度: <span id="atk-speed">1.00</span> 回/秒</div>
         </div>
         <div style="margin-top: 12px; display: flex; justify-content: center; gap: 8px;">
             <button id="btn-rebirth" onclick="window.executeRebirth()">次元転生ゲート作動 (+<span id="pending-crystals">0</span>💎)</button>
@@ -83,22 +93,29 @@
 
     <!-- 💪 通常訓練タブ -->
     <div id="tab-train" class="tab-content active">
+        <div class="buy-amount-btns">
+            <button id="train-buy-1" onclick="setBuyAmount(1)">x1</button>
+            <button id="train-buy-10" onclick="setBuyAmount(10)">x10</button>
+            <button id="train-buy-100" onclick="setBuyAmount(100)">x100</button>
+            <button id="train-buy-max" onclick="setBuyAmount('max')">MAX</button>
+        </div>
+
         <h4>💪 通常訓練（転生でリセット）</h4>
         <div class="item-row">
             <div>腕力 (+5 ATK) [Lv: <span id="lv-atk">0</span>]</div>
-            <button onclick="window.train('atk')">100G / 訓練</button>
+            <button onclick="window.train('atk')"><span id="price-train-atk">100</span>G</button>
         </div>
         <div class="item-row">
             <div>体力 (+30 HP) [Lv: <span id="lv-hp">0</span>]</div>
-            <button onclick="window.train('hp')">100G / 訓練</button>
+            <button onclick="window.train('hp')"><span id="price-train-hp">100</span>G</button>
         </div>
         <div class="item-row">
             <div>装甲 (+2 DEF) [Lv: <span id="lv-def">0</span>]</div>
-            <button onclick="window.train('def')">150G / 訓練</button>
+            <button onclick="window.train('def')"><span id="price-train-def">150</span>G</button>
         </div>
         <div class="item-row">
             <div>活法 (+2 回復) [Lv: <span id="lv-regen">1</span>]</div>
-            <button onclick="window.train('regen')">200G / 訓練</button>
+            <button onclick="window.train('regen')"><span id="price-train-regen">200</span>G</button>
         </div>
         
         <h4>🛡 現在の武具</h4>
@@ -131,6 +148,13 @@
 
     <!-- 💎 永続特権タブ -->
     <div id="tab-shop" class="tab-content">
+        <div class="buy-amount-btns">
+            <button id="shop-buy-1" onclick="setBuyAmount(1)">x1</button>
+            <button id="shop-buy-10" onclick="setBuyAmount(10)">x10</button>
+            <button id="shop-buy-100" onclick="setBuyAmount(100)">x100</button>
+            <button id="shop-buy-max" onclick="setBuyAmount('max')">MAX</button>
+        </div>
+
         <h3>転生時獲得予定の結晶: <span id="pending-crystals-shop">0</span> 個</h3>
         <h4>💎 永続特権（リセットなし）</h4>
         <div class="item-row">
@@ -162,18 +186,31 @@
             <button onclick="window.buyShop('bag')"><span id="price-sh-bag">1</span> 💎</button>
         </div>
         <div class="item-row">
-            <div>行商人契約 (溢れ売却額+20% / Lv: <span id="shop-autosell-lv">0</span>/10)</div>
+            <div>行商人契約 (溢れ売却額+5% / Lv: <span id="shop-autosell-lv">0</span>/10) 最大+50%</div>
             <button id="btn-sh-autosell" onclick="window.buyShop('autosell')"><span id="price-sh-autosell">3</span> 💎</button>
         </div>
         <div class="item-row">
             <div>竜の識別眼 (自動換装 / 状態: <span id="shop-autoequip-val">OFF</span>)</div>
-            <button id="btn-sh-autoequip" onclick="window.buyShop('autoequip')">5 💎</button>
+            <button id="btn-sh-autoequip" onclick="window.buyShop('autoequip')">50 💎</button>
         </div>
         <div class="item-row">
             <div>精霊の加護 (回復量+20% / Lv: <span id="shop-regen-lv">0</span>)</div>
             <button onclick="window.buyShop('regen')"><span id="price-sh-regen">2</span> 💎</button>
         </div>
-        <div style="margin-top: 15px; text-align: center;">
+        <div class="item-row">
+            <div>ドロップ上限強化 (最大+値 / 現在: <span id="shop-dropmax-val">50</span> / Lv: <span id="shop-dropmax-lv">0</span>)</div>
+            <button onclick="window.buyShop('dropmax')"><span id="price-sh-dropmax">5</span> 💎</button>
+        </div>
+        <div class="item-row">
+            <div>ドロップ下限強化 (最小+値 / 現在: <span id="shop-dropmin-val">1</span> / Lv: <span id="shop-dropmin-lv">0</span>)</div>
+            <button onclick="window.buyShop('dropmin')"><span id="price-sh-dropmin">8</span> 💎</button>
+        </div>
+
+        <h4>💾 セーブデータ管理</h4>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="btn-blue" onclick="window.exportSave()">📤 セーブデータをエクスポート</button>
+            <button class="btn-blue" onclick="document.getElementById('import-file').click()">📥 セーブデータをインポート</button>
+            <input type="file" id="import-file" accept=".json" style="display:none;" onchange="window.importSave(event)">
             <button class="btn-danger" onclick="window.resetGame()" style="font-size:11px; padding: 4px 8px;">⚠ セーブデータ強制初期化リセット</button>
         </div>
     </div>
@@ -205,9 +242,12 @@ var defaultData = {
     lvAtk: 0, lvHp: 0, lvDef: 0, lvRegen: 1,
     currentStageId: 1, stageMinor: 1, maxUnlockedStageId: 1,
     playerHp: 150, enemyHp: 50,
-    wAtk: 0, wName: "なし", aDef: 0, aName: "なし",
+    wAtk: 0, wName: "なし", wPlus: 0,
+    aDef: 0, aName: "なし", aPlus: 0,
     crystal: 0, shAtk: 0, shDef: 0, shGold: 0, shSpd: 0,
     shCritRate: 0, shCritDmg: 0, shBag: 0, shAutoSell: 0, shAutoEquip: 0, shRegen: 0,
+    shDropMax: 0, shDropMin: 0,
+    bestPower: 0,
     weaponsBag: [], armorsBag: [],
     artifacts: { 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0 }
 };
@@ -217,6 +257,24 @@ var playerInterval = null, enemyInterval = null, regenInterval = null;
 var enemies = ["ハウンド", "インプ", "ゴブリン", "マフィア", "用心棒", "錬金術師", "ブラックオーク", "シャドウナイト", "デーモン債務兵"];
 var wPool = ["ボロい剣", "鉄のつるぎ", "ハクスラダガー", "シャドウブレード", "レガシーソード"];
 var aPool = ["布の服", "レザーアーマー", "鉄の胸当て", "合金の硬質鎧", "ダークプレート"];
+
+var buyAmount = 1;
+
+function setBuyAmount(amount) {
+    buyAmount = amount;
+    updateBuyAmountButtons();
+    updateUI();
+}
+
+function updateBuyAmountButtons() {
+    ['1', '10', '100', 'max'].forEach(function(v) {
+        var trainBtn = document.getElementById('train-buy-' + v);
+        var shopBtn = document.getElementById('shop-buy-' + v);
+        var isActive = (buyAmount == v) || (v === 'max' && buyAmount === 'max');
+        if (trainBtn) trainBtn.classList.toggle('active', isActive);
+        if (shopBtn) shopBtn.classList.toggle('active', isActive);
+    });
+}
 
 function sanitizeGameData() {
     if (!game || typeof game !== "object") game = Object.assign({}, defaultData);
@@ -240,6 +298,11 @@ function sanitizeGameData() {
     if (isNaN(game.shAutoSell)) game.shAutoSell = 0;
     if (isNaN(game.shAutoEquip)) game.shAutoEquip = 0;
     if (isNaN(game.shRegen)) game.shRegen = 0;
+    if (isNaN(game.shDropMax)) game.shDropMax = 0;
+    if (isNaN(game.shDropMin)) game.shDropMin = 0;
+    if (isNaN(game.wPlus)) game.wPlus = 0;
+    if (isNaN(game.aPlus)) game.aPlus = 0;
+    if (isNaN(game.bestPower)) game.bestPower = 0;
     if (!game.weaponsBag || !Array.isArray(game.weaponsBag)) game.weaponsBag = [];
     if (!game.armorsBag || !Array.isArray(game.armorsBag)) game.armorsBag = [];
     if (!game.artifacts || typeof game.artifacts !== "object" || Array.isArray(game.artifacts)) {
@@ -293,8 +356,8 @@ function getArtBonus(type) {
 }
 
 function getMult() { return Math.pow(1.5, game.rebirths); }
-function getTargetMaxHp() { return Math.floor((150 + game.lvHp * 30) * getMult()); }
-function getMaxHp() { return getTargetMaxHp(); }
+
+function getMaxHp() { return Math.floor((150 + game.lvHp * 30) * getMult()); }
 
 function getAtk() {
     var rawWAtk = isNaN(game.wAtk) || game.wAtk < 0 ? 0 : game.wAtk;
@@ -324,7 +387,15 @@ function getRegenSpeed() {
 function getCritRate() { return 5 + game.shCritRate * 1; }
 function getCritDmgMultiplier() { return 1.5 + game.shCritDmg * 0.1 + getArtBonus("crit_dmg"); }
 function getBagMax() { return 10 + game.shBag * 5; }
-function getAutoSellBonus() { return 1.0 + game.shAutoSell * 0.2; }
+function getAutoSellBonus() { return 1.0 + game.shAutoSell * 0.05; }
+
+function getDropMaxPlus() {
+    return Math.min(9999, 50 + game.shDropMax * 80);
+}
+function getDropMinPlus() {
+    var min = 1 + game.shDropMin * 40;
+    return Math.min(9000, Math.min(min, getDropMaxPlus()));
+}
 
 function getActiveStage() {
     var found = STAGES.find(function(s) { return s.id === game.currentStageId; });
@@ -357,6 +428,34 @@ function calculateCrystals() {
 function getAttackInterval() {
     var frames = 60 - game.shSpd;
     return Math.max(1, frames) * Math.floor(1000 / 60);
+}
+
+// ===== 総合力計算（初期状態：装備なし・通常訓練なし） =====
+function getTotalPower() {
+    var mult = getMult();
+    
+    // 装備・通常訓練を無視した基礎値
+    var cleanAtk = Math.floor((10) * mult * (1 + game.shAtk * 0.2) * (1 + getArtBonus("atk")));
+    var cleanDef = Math.floor((0) * mult * (1 + game.shDef * 0.2) * (1 + getArtBonus("def")));
+    var cleanHp  = Math.floor(150 * mult);
+    var cleanRegen = Math.floor(2 * (1 + game.shRegen * 0.2) * (1 + getArtBonus("regen_val"))); // lvRegen=1基準
+    
+    var critRate = getCritRate() / 100;
+    var critDmg = getCritDmgMultiplier();
+    var atkSpeed = 1000 / getAttackInterval(); // 回/秒
+    
+    // 総合力計算式（バランス調整済み）
+    var power = 0;
+    power += cleanAtk * 10;                            // 攻撃力
+    power += cleanDef * 15;                            // 防御力
+    power += cleanHp * 0.5;                            // HP
+    power += cleanAtk * critRate * (critDmg - 1) * 20; // クリティカル貢献
+    power += cleanRegen * 8;                           // 回復力
+    power += atkSpeed * 80;                            // 攻撃速度
+    power += game.shBag * 30;                         // バッグ拡張の価値
+    power += (getDropMaxPlus() / 100) * 5;             // ドロップ上限の価値
+    
+    return Math.floor(power);
 }
 
 function checkPlayerDeath() {
@@ -421,7 +520,7 @@ function renderInventory() {
         var wHtml = "";
         game.weaponsBag.forEach(function(item, index) {
             wHtml += '<div class="item-row">' +
-                '<div>▶ ' + item.name + ' (+' + item.stat + ' ATK)</div>' +
+                '<div>▶ ' + item.name + ' +' + item.plus + ' (+' + item.stat + ' ATK)</div>' +
                 '<div>' +
                     '<button onclick="window.equipWeapon(' + index + ')">装備</button> ' +
                     '<button class="btn-danger" onclick="window.sellWeapon(' + index + ')">' + item.value + 'G</button>' +
@@ -435,7 +534,7 @@ function renderInventory() {
         var aHtml = "";
         game.armorsBag.forEach(function(item, index) {
             aHtml += '<div class="item-row">' +
-                '<div>▶ ' + item.name + ' (+' + item.stat + ' DEF)</div>' +
+                '<div>▶ ' + item.name + ' +' + item.plus + ' (+' + item.stat + ' DEF)</div>' +
                 '<div>' +
                     '<button onclick="window.equipArmor(' + index + ')">装備</button> ' +
                     '<button class="btn-danger" onclick="window.sellArmor(' + index + ')">' + item.value + 'G</button>' +
@@ -452,11 +551,13 @@ function renderInventory() {
 
 window.equipWeapon = function(index) {
     if (index < 0 || index >= game.weaponsBag.length) return;
-    var old = { name: game.wName, stat: game.wAtk, value: Math.floor(game.wAtk * 5) };
+    var old = { name: game.wName, plus: game.wPlus, stat: game.wAtk, value: Math.floor(game.wAtk * 5) };
     var n = game.weaponsBag[index];
-    game.wName = n.name; game.wAtk = n.stat;
+    game.wName = n.name;
+    game.wPlus = n.plus;
+    game.wAtk = n.stat;
     game.weaponsBag.splice(index, 1);
-    if (old.stat > 0) pushOrSellItem('w', old.name, old.stat, old.value);
+    if (old.stat > 0) pushOrSellItem('w', old.name, old.plus, old.stat, old.value);
     updateUI();
 };
 
@@ -469,11 +570,13 @@ window.sellWeapon = function(index) {
 
 window.equipArmor = function(index) {
     if (index < 0 || index >= game.armorsBag.length) return;
-    var old = { name: game.aName, stat: game.aDef, value: Math.floor(game.aDef * 10) };
+    var old = { name: game.aName, plus: game.aPlus, stat: game.aDef, value: Math.floor(game.aDef * 10) };
     var n = game.armorsBag[index];
-    game.aName = n.name; game.aDef = n.stat;
+    game.aName = n.name;
+    game.aPlus = n.plus;
+    game.aDef = n.stat;
     game.armorsBag.splice(index, 1);
-    if (old.stat > 0) pushOrSellItem('a', old.name, old.stat, old.value);
+    if (old.stat > 0) pushOrSellItem('a', old.name, old.plus, old.stat, old.value);
     updateUI();
 };
 
@@ -484,11 +587,11 @@ window.sellArmor = function(index) {
     updateUI();
 };
 
-function pushOrSellItem(type, name, statValue, goldValue) {
+function pushOrSellItem(type, name, plus, statValue, goldValue) {
     if (game.weaponsBag.length + game.armorsBag.length >= getBagMax()) {
         game.gold += Math.floor(goldValue * getAutoSellBonus());
     } else {
-        var obj = { name: name, stat: statValue, value: goldValue };
+        var obj = { name: name, plus: plus, stat: statValue, value: goldValue };
         if (type === 'w') game.weaponsBag.push(obj);
         else game.armorsBag.push(obj);
     }
@@ -516,31 +619,48 @@ window.sellAllInventory = function() {
     updateUI();
 };
 
-function handleItemDrop(type, qIdx, statVal) {
+function generatePlus() {
+    var min = getDropMinPlus();
+    var max = getDropMaxPlus();
+    if (min > max) min = max;
+    var range = max - min + 1;
+    var r = Math.random();
+    var plus = min + Math.floor(Math.pow(r, 2.8) * range);
+    return Math.min(max, Math.max(min, plus));
+}
+
+function handleItemDrop(type, qIdx) {
     var name = type === 'w' ? wPool[qIdx] : aPool[qIdx];
-    var val = statVal * (type === 'w' ? 5 : 10);
+    var plus = generatePlus();
+    var base = type === 'w' ?
+        (qIdx + 1) * 6 + game.currentStageId * 3 :
+        (qIdx + 1) * 3 + game.currentStageId * 2;
+    var stat = Math.floor(base + plus * (type === 'w' ? 1.2 : 0.7));
+    var val = Math.floor(stat * (type === 'w' ? 5 : 10));
+
     var activeSt = getActiveStage();
     var artChance = (game.stageMinor === 100) ? 0.03 : 0.01;
     if (Math.random() < artChance) {
         game.artifacts[activeSt.id] = (game.artifacts[activeSt.id] || 0) + 1;
         addLog("🏆 宝物ドロップ!! 「" + activeSt.art + "」を獲得！");
     }
+
     if (game.shAutoEquip === 1) {
-        if ((type === 'w' && statVal > game.wAtk) || (type === 'a' && statVal > game.aDef)) {
+        if ((type === 'w' && stat > game.wAtk) || (type === 'a' && stat > game.aDef)) {
             if (type === 'w') {
-                var old = { name: game.wName, stat: game.wAtk, value: Math.floor(game.wAtk * 5) };
-                game.wName = name; game.wAtk = statVal;
-                if (old.stat > 0) pushOrSellItem('w', old.name, old.stat, old.value);
+                var old = { name: game.wName, plus: game.wPlus, stat: game.wAtk, value: Math.floor(game.wAtk * 5) };
+                game.wName = name; game.wPlus = plus; game.wAtk = stat;
+                if (old.stat > 0) pushOrSellItem('w', old.name, old.plus, old.stat, old.value);
             } else {
-                var old = { name: game.aName, stat: game.aDef, value: Math.floor(game.aDef * 10) };
-                game.aName = name; game.aDef = statVal;
-                if (old.stat > 0) pushOrSellItem('a', old.name, old.stat, old.value);
+                var old = { name: game.aName, plus: game.aPlus, stat: game.aDef, value: Math.floor(game.aDef * 10) };
+                game.aName = name; game.aPlus = plus; game.aDef = stat;
+                if (old.stat > 0) pushOrSellItem('a', old.name, old.plus, old.stat, old.value);
             }
-            addLog("🧠 自動装備:「" + name + "」に自動換装。");
+            addLog("🧠 自動装備:「" + name + " +" + plus + "」に自動換装。");
             return;
         }
     }
-    pushOrSellItem(type, name, statVal, val);
+    pushOrSellItem(type, name, plus, stat, val);
 }
 
 function playerAttackLoop() {
@@ -557,8 +677,8 @@ function playerAttackLoop() {
             addLog("⚔ 敵を撃破！ 💰 +" + g + "G");
             if (Math.random() < 0.25) {
                 var q = Math.min(4, Math.floor(Math.random() * (game.stageMinor / 15 + 1)));
-                if (Math.random() < 0.5) handleItemDrop('w', q, (q + 1) * 8 + Math.floor(Math.random() * 5) + (game.currentStageId * 5));
-                else handleItemDrop('a', q, (q + 1) * 3 + Math.floor(Math.random() * 3) + (game.currentStageId * 2));
+                if (Math.random() < 0.5) handleItemDrop('w', q);
+                else handleItemDrop('a', q);
             }
             if (game.stageMinor === 100) {
                 addLog("🎉 【" + getActiveStage().name + "】100階層ボス撃破！");
@@ -603,31 +723,103 @@ function startTimers() {
 }
 
 window.train = function(t) {
-    if (t === 'atk' && game.gold >= 100) { game.gold -= 100; game.lvAtk++; }
-    else if (t === 'hp' && game.gold >= 100) { game.gold -= 100; game.lvHp++; game.playerHp = getMaxHp(); }
-    else if (t === 'def' && game.gold >= 150) { game.gold -= 150; game.lvDef++; }
-    else if (t === 'regen' && game.gold >= 200) { game.gold -= 200; game.lvRegen++; }
+    var costPer = 0;
+    if (t === 'atk') costPer = 100;
+    else if (t === 'hp') costPer = 100;
+    else if (t === 'def') costPer = 150;
+    else if (t === 'regen') costPer = 200;
     else return;
-    updateUI(); saveGame();
+
+    var maxAffordable = Math.floor(game.gold / costPer);
+    if (maxAffordable <= 0) return;
+
+    var toBuy = (buyAmount === 'max') ? maxAffordable : Math.min(Number(buyAmount), maxAffordable);
+    if (toBuy <= 0) return;
+
+    game.gold -= toBuy * costPer;
+
+    if (t === 'atk') game.lvAtk += toBuy;
+    else if (t === 'hp') { game.lvHp += toBuy; game.playerHp = getMaxHp(); }
+    else if (t === 'def') game.lvDef += toBuy;
+    else if (t === 'regen') game.lvRegen += toBuy;
+
+    updateUI();
+    saveGame();
 };
 
+function getShopCostInfo(type) {
+    var current = 0;
+    var costMultiplier = 1;
+    var maxLevel = Infinity;
+
+    if (type === 'atk') { current = game.shAtk; costMultiplier = 1; }
+    else if (type === 'def') { current = game.shDef; costMultiplier = 1; }
+    else if (type === 'gold') { current = game.shGold; costMultiplier = 1; }
+    else if (type === 'spd') { current = game.shSpd; costMultiplier = 2; maxLevel = 59; }
+    else if (type === 'crit_rate') { current = game.shCritRate; costMultiplier = 2; maxLevel = 95; }
+    else if (type === 'crit_dmg') { current = game.shCritDmg; costMultiplier = 2; }
+    else if (type === 'bag') { current = game.shBag; costMultiplier = 1; }
+    else if (type === 'autosell') { current = game.shAutoSell; costMultiplier = 3; maxLevel = 10; }
+    else if (type === 'regen') { current = game.shRegen; costMultiplier = 2; }
+    else if (type === 'dropmax') { current = game.shDropMax; costMultiplier = 5; }
+    else if (type === 'dropmin') { current = game.shDropMin; costMultiplier = 8; }
+    else if (type === 'autoequip') { return { canBuy: game.shAutoEquip < 1, totalCost: 50, toBuy: 1 }; }
+    else return null;
+
+    var remaining = maxLevel - current;
+    if (remaining <= 0) return { canBuy: false, totalCost: 0, toBuy: 0 };
+
+    var maxPossible = remaining;
+    var desired = (buyAmount === 'max') ? maxPossible : Math.min(Number(buyAmount), maxPossible);
+
+    var totalCost = 0;
+    var actualBuy = 0;
+    for (var i = 1; i <= desired; i++) {
+        var nextCost = (current + i) * costMultiplier;
+        if (totalCost + nextCost > game.crystal) break;
+        totalCost += nextCost;
+        actualBuy++;
+    }
+
+    return { canBuy: actualBuy > 0, totalCost: totalCost, toBuy: actualBuy };
+}
+
 window.buyShop = function(type) {
-    if (type === 'atk' && game.crystal >= (game.shAtk + 1)) { game.crystal -= (game.shAtk + 1); game.shAtk++; }
-    else if (type === 'def' && game.crystal >= (game.shDef + 1)) { game.crystal -= (game.shDef + 1); game.shDef++; }
-    else if (type === 'gold' && game.crystal >= (game.shGold + 1)) { game.crystal -= (game.shGold + 1); game.shGold++; }
-    else if (type === 'spd' && game.shSpd < 59 && game.crystal >= ((game.shSpd + 1) * 2)) { game.crystal -= ((game.shSpd + 1) * 2); game.shSpd++; startTimers(); }
-    else if (type === 'crit_rate' && game.shCritRate < 95 && game.crystal >= ((game.shCritRate + 1) * 2)) { game.crystal -= ((game.shCritRate + 1) * 2); game.shCritRate++; }
-    else if (type === 'crit_dmg' && game.crystal >= ((game.shCritDmg + 1) * 2)) { game.crystal -= ((game.shCritDmg + 1) * 2); game.shCritDmg++; }
-    else if (type === 'bag' && game.crystal >= (game.shBag + 1)) { game.crystal -= (game.shBag + 1); game.shBag++; }
-    else if (type === 'autosell' && game.shAutoSell < 10 && game.crystal >= ((game.shAutoSell + 1) * 3)) { game.crystal -= ((game.shAutoSell + 1) * 3); game.shAutoSell++; }
-    else if (type === 'autoequip' && game.shAutoEquip < 1 && game.crystal >= 5) { game.crystal -= 5; game.shAutoEquip = 1; }
-    else if (type === 'regen' && game.crystal >= ((game.shRegen + 1) * 2)) { game.crystal -= ((game.shRegen + 1) * 2); game.shRegen++; }
-    else return;
-    addLog("💎 ショップ購入完了");
-    updateUI(); saveGame();
+    if (type === 'autoequip') {
+        if (game.shAutoEquip < 1 && game.crystal >= 50) {
+            game.crystal -= 50;
+            game.shAutoEquip = 1;
+            addLog("💎 ショップ購入完了");
+            updateUI();
+            saveGame();
+        }
+        return;
+    }
+
+    var info = getShopCostInfo(type);
+    if (!info || !info.canBuy || info.toBuy <= 0) return;
+
+    game.crystal -= info.totalCost;
+
+    if (type === 'atk') game.shAtk += info.toBuy;
+    else if (type === 'def') game.shDef += info.toBuy;
+    else if (type === 'gold') game.shGold += info.toBuy;
+    else if (type === 'spd') { game.shSpd += info.toBuy; startTimers(); }
+    else if (type === 'crit_rate') game.shCritRate += info.toBuy;
+    else if (type === 'crit_dmg') game.shCritDmg += info.toBuy;
+    else if (type === 'bag') game.shBag += info.toBuy;
+    else if (type === 'autosell') game.shAutoSell += info.toBuy;
+    else if (type === 'regen') game.shRegen += info.toBuy;
+    else if (type === 'dropmax') game.shDropMax += info.toBuy;
+    else if (type === 'dropmin') game.shDropMin += info.toBuy;
+
+    addLog("💎 ショップ購入完了（" + info.toBuy + "レベル）");
+    updateUI();
+    saveGame();
 };
 
 window.resetGame = function() {
+    if (!confirm("本当にセーブデータを完全に削除しますか？")) return;
     localStorage.removeItem("legacy_idle_rpg_save");
     game = Object.assign({}, defaultData);
     var l = document.getElementById("log"); if (l) l.innerHTML = "";
@@ -640,7 +832,8 @@ window.executeRebirth = function() {
     game.crystal += earned; game.rebirths++;
     game.gold = 0; game.lvAtk = 0; game.lvHp = 0; game.lvDef = 0; game.lvRegen = 1;
     game.currentStageId = 1; game.maxUnlockedStageId = 1; game.stageMinor = 1;
-    game.wAtk = 0; game.wName = "なし"; game.aDef = 0; game.aName = "なし";
+    game.wAtk = 0; game.wName = "なし"; game.wPlus = 0;
+    game.aDef = 0; game.aName = "なし"; game.aPlus = 0;
     game.playerHp = getMaxHp(); game.enemyHp = getE_MaxHp();
     game.weaponsBag = []; game.armorsBag = [];
     var l = document.getElementById("log"); if (l) l.innerHTML = "";
@@ -648,14 +841,67 @@ window.executeRebirth = function() {
     startTimers(); startRegenTimer(); updateUI(); saveGame();
 };
 
+// ===== セーブデータ エクスポート／インポート =====
+window.exportSave = function() {
+    saveGame();
+    var dataStr = JSON.stringify(game, null, 2);
+    var blob = new Blob([dataStr], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "legacy_idle_rpg_save_" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+    addLog("📤 セーブデータをエクスポートしました。");
+};
+
+window.importSave = function(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var parsed = JSON.parse(e.target.result);
+            if (!parsed || typeof parsed !== "object") throw new Error("Invalid data");
+            if (!confirm("現在のセーブデータを上書きしてインポートしますか？")) return;
+            game = Object.assign({}, defaultData, parsed);
+            sanitizeGameData();
+            saveGame();
+            startTimers();
+            startRegenTimer();
+            updateUI();
+            addLog("📥 セーブデータをインポートしました。");
+        } catch (err) {
+            alert("インポートに失敗しました。ファイルが壊れているか、形式が違います。");
+            console.error(err);
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = "";
+};
+
 function updateUI() {
     var safeSetText = function(id, text) { var el = document.getElementById(id); if (el) el.innerText = text; };
+    
+    // 総合力
+    var power = getTotalPower();
+    safeSetText("total-power", power.toLocaleString());
+    if (power > game.bestPower) {
+        game.bestPower = power;
+    }
+    safeSetText("best-power", game.bestPower.toLocaleString());
+
     safeSetText("gold", game.gold.toLocaleString());
     safeSetText("crystal", game.crystal.toLocaleString());
     safeSetText("total-atk", getAtk().toLocaleString());
     safeSetText("total-def", getDef().toLocaleString());
     safeSetText("total-regen", getRegenVal().toLocaleString());
     if (document.getElementById("regen-speed")) document.getElementById("regen-speed").innerText = (getRegenSpeed() / 1000).toFixed(2);
+    
+    var interval = getAttackInterval();
+    var atkPerSec = (1000 / interval).toFixed(2);
+    safeSetText("atk-speed", atkPerSec);
+    
     safeSetText("stat-crit-rate", getCritRate());
     safeSetText("stat-crit-dmg", Math.round(getCritDmgMultiplier() * 100));
     safeSetText("rebirth-count", game.rebirths);
@@ -676,28 +922,94 @@ function updateUI() {
     }
     safeSetText("enemy-hp", Math.floor(game.enemyHp));
     safeSetText("enemy-max-hp", Math.floor(getE_MaxHp()));
-    safeSetText("w-name", game.wName);
-    safeSetText("w-atk", game.wAtk > 0 ? "(+" + game.wAtk + " ATK)" : "");
-    safeSetText("a-name", game.aName);
-    safeSetText("a-def", game.aDef > 0 ? "(+" + game.aDef + " DEF)" : "");
+    
+    if (game.wAtk > 0) {
+        safeSetText("w-name", game.wName + " +" + game.wPlus);
+        safeSetText("w-atk", "(+" + game.wAtk + " ATK)");
+    } else {
+        safeSetText("w-name", "なし");
+        safeSetText("w-atk", "");
+    }
+    if (game.aDef > 0) {
+        safeSetText("a-name", game.aName + " +" + game.aPlus);
+        safeSetText("a-def", "(+" + game.aDef + " DEF)");
+    } else {
+        safeSetText("a-name", "なし");
+        safeSetText("a-def", "");
+    }
+
     safeSetText("lv-atk", game.lvAtk);
     safeSetText("lv-hp", game.lvHp);
     safeSetText("lv-def", game.lvDef);
     safeSetText("lv-regen", game.lvRegen);
-    safeSetText("shop-atk-lv", game.shAtk); safeSetText("price-sh-atk", game.shAtk + 1);
-    safeSetText("shop-def-lv", game.shDef); safeSetText("price-sh-def", game.shDef + 1);
-    safeSetText("shop-gold-lv", game.shGold); safeSetText("price-sh-gold", game.shGold + 1);
-    safeSetText("shop-spd-lv", game.shSpd); safeSetText("price-sh-spd", (game.shSpd + 1) * 2);
-    safeSetText("shop-crit-rate-lv", game.shCritRate); safeSetText("price-sh-crit-rate", (game.shCritRate + 1) * 2);
-    safeSetText("shop-crit-dmg-lv", game.shCritDmg); safeSetText("price-sh-crit-dmg", (game.shCritDmg + 1) * 2);
-    safeSetText("shop-bag-lv", game.shBag); safeSetText("price-sh-bag", game.shBag + 1);
-    safeSetText("shop-autosell-lv", game.shAutoSell); safeSetText("price-sh-autosell", (game.shAutoSell + 1) * 3);
+
+    function updateTrainPrice(id, costPer) {
+        var maxAffordable = Math.floor(game.gold / costPer);
+        var toBuy = (buyAmount === 'max') ? maxAffordable : Math.min(Number(buyAmount), maxAffordable);
+        var total = toBuy * costPer;
+        safeSetText(id, total > 0 ? total.toLocaleString() : costPer);
+    }
+    updateTrainPrice("price-train-atk", 100);
+    updateTrainPrice("price-train-hp", 100);
+    updateTrainPrice("price-train-def", 150);
+    updateTrainPrice("price-train-regen", 200);
+
+    function updateShopPrice(type, priceId) {
+        var info = getShopCostInfo(type);
+        if (info && info.toBuy > 0) {
+            safeSetText(priceId, info.totalCost.toLocaleString());
+        } else {
+            var current = 0, mult = 1;
+            if (type === 'atk') current = game.shAtk;
+            else if (type === 'def') current = game.shDef;
+            else if (type === 'gold') current = game.shGold;
+            else if (type === 'spd') { current = game.shSpd; mult = 2; }
+            else if (type === 'crit_rate') { current = game.shCritRate; mult = 2; }
+            else if (type === 'crit_dmg') { current = game.shCritDmg; mult = 2; }
+            else if (type === 'bag') current = game.shBag;
+            else if (type === 'autosell') { current = game.shAutoSell; mult = 3; }
+            else if (type === 'regen') { current = game.shRegen; mult = 2; }
+            else if (type === 'dropmax') { current = game.shDropMax; mult = 5; }
+            else if (type === 'dropmin') { current = game.shDropMin; mult = 8; }
+            safeSetText(priceId, ((current + 1) * mult).toLocaleString());
+        }
+    }
+    updateShopPrice('atk', "price-sh-atk");
+    updateShopPrice('def', "price-sh-def");
+    updateShopPrice('gold', "price-sh-gold");
+    updateShopPrice('spd', "price-sh-spd");
+    updateShopPrice('crit_rate', "price-sh-crit-rate");
+    updateShopPrice('crit_dmg', "price-sh-crit-dmg");
+    updateShopPrice('bag', "price-sh-bag");
+    updateShopPrice('autosell', "price-sh-autosell");
+    updateShopPrice('regen', "price-sh-regen");
+    updateShopPrice('dropmax', "price-sh-dropmax");
+    updateShopPrice('dropmin', "price-sh-dropmin");
+
+    safeSetText("shop-atk-lv", game.shAtk);
+    safeSetText("shop-def-lv", game.shDef);
+    safeSetText("shop-gold-lv", game.shGold);
+    safeSetText("shop-spd-lv", game.shSpd);
+    safeSetText("shop-crit-rate-lv", game.shCritRate);
+    safeSetText("shop-crit-dmg-lv", game.shCritDmg);
+    safeSetText("shop-bag-lv", game.shBag);
+    safeSetText("shop-autosell-lv", game.shAutoSell);
     safeSetText("shop-autoequip-val", game.shAutoEquip === 1 ? "ON" : "OFF");
-    safeSetText("shop-regen-lv", game.shRegen); safeSetText("price-sh-regen", (game.shRegen + 1) * 2);
+    safeSetText("shop-regen-lv", game.shRegen);
+    safeSetText("shop-dropmax-lv", game.shDropMax);
+    safeSetText("shop-dropmin-lv", game.shDropMin);
+    safeSetText("shop-dropmax-val", getDropMaxPlus());
+    safeSetText("shop-dropmin-val", getDropMinPlus());
+
     if (game.shSpd >= 59) { var b = document.getElementById("btn-sh-spd"); if (b) b.disabled = true; }
+    else { var b = document.getElementById("btn-sh-spd"); if (b) b.disabled = false; }
     if (game.shCritRate >= 95) { var b = document.getElementById("btn-sh-crit-rate"); if (b) b.disabled = true; }
+    else { var b = document.getElementById("btn-sh-crit-rate"); if (b) b.disabled = false; }
     if (game.shAutoSell >= 10) { var b = document.getElementById("btn-sh-autosell"); if (b) b.disabled = true; }
+    else { var b = document.getElementById("btn-sh-autosell"); if (b) b.disabled = false; }
     if (game.shAutoEquip >= 1) { var b = document.getElementById("btn-sh-autoequip"); if (b) b.disabled = true; }
+    else { var b = document.getElementById("btn-sh-autoequip"); if (b) b.disabled = false; }
+
     var frames = Math.max(1, 60 - game.shSpd);
     var speedDisplay = document.getElementById("speed-indicator");
     if (speedDisplay) speedDisplay.innerText = frames === 1 ? "⚡最速1F" : "秒間" + parseFloat(60 / frames).toFixed(1) + "回";
@@ -708,6 +1020,7 @@ function updateUI() {
     renderStageButtons();
     renderArtifacts();
     renderInventory();
+    updateBuyAmountButtons();
 }
 
 // 起動
