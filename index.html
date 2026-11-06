@@ -1,307 +1,333 @@
-Legacy Idle RPG - Pure Auto Edition
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legacy Idle RPG</title>
+    <style>
+        body { font-family: monospace; padding: 20px; line-height: 1.6; background-color: #f4f4f4; color: #333; }
+        h1, h3, h4 { margin-top: 20px; margin-bottom: 10px; }
+        button { padding: 5px 10px; margin: 2px; cursor: pointer; }
+        .hp-bar-container { width: 200px; background-color: #ddd; border: 1px solid #aaa; margin: 5px 0; }
+        .hp-bar { height: 20px; background-color: #4caf50; width: 100%; transition: width 0.1s; }
+        #enemy-hp-bar { background-color: #f44336; }
+        #log { background: #fff; border: 1px solid #ccc; height: 150px; overflow-y: scroll; padding: 10px; margin-top: 10px; font-size: 12px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-btn.active { font-weight: bold; background-color: #ddd; }
+        .stage-btn.active { border: 2px solid #333; font-weight: bold; }
+    </style>
+</head>
+<body>
 
-# Legacy Idle RPG
+    <h1>Legacy Idle RPG - Pure Auto Edition</h1>
 
-### 📊 総合能力値
-💰 所持金: 0 G
-🏛 残りの借金: 1,000,000,000 G
-💎 魂の結晶: 0 個
-⚔ 総攻撃力: 10
-🛡 総防御力: 0
-💥 会心確率: 5%
-🔥 会心倍率: 150%
-💚 自動回復: 2
-⏳ 回復速度: 1.00 s
-🔄 転生回数: 0 回 (+ 0%)
+    <h3>📊 総合能力値</h3>
+    <p>💰 所持金: <span id="gold">0</span> G</p>
+    <p>🏛 残りの借金: <span id="debt">1,000,000,000</span> G</p>
+    <p>💎 魂の結晶: <span id="crystal">0</span> 個</p>
+    <p>⚔ 総攻撃力: <span id="total-atk">10</span></p>
+    <p>🛡 総防御力: <span id="total-def">0</span></p>
+    <p>💥 会心確率: <span id="stat-crit-rate">5</span>%</p>
+    <p>🔥 会心倍率: <span id="stat-crit-dmg">150</span>%</p>
+    <p>💚 自動回復: <span id="total-regen">2</span></p>
+    <p>⏳ 回復速度: <span id="regen-speed">1.00</span> s</p>
+    <p>🔄 転生回数: <span id="rebirth-count">0</span> 回 (+ <span id="buff-percent">0</span>%)</p>
 
-### 🛡 現在の武具
-⚔ 武器: なし
-🛡 防具: なし
+    <h3>🛡 現在の武具</h3>
+    <p>⚔ 武器: <span id="w-name">なし</span> <span id="w-atk"></span></p>
+    <p>🛡 防具: <span id="a-name">なし</span> <span id="a-def"></span></p>
 
-⚡ 最強武具を一括装備
-⚔ 完全オート戦闘中... ( 秒間1.0回)
+    <button onclick="equipBestAll()">⚡ 最強武具を一括装備</button>
+    <p>⚔ 完全オート戦闘中... (<span id="speed-indicator">秒間1.0回</span>)</p>
 
-下水道の巣窟 (1階)
-🛡 プレイヤー: 150 / 150 HP
-😈 ハウンド(階層兵): 50 / 50 HP
+    <h3 id="stage-display-full">下水道の巣窟 (1階)</h3>
+    <div>
+        🛡 プレイヤー: <span id="player-hp">150</span> / <span id="player-max-hp">150</span> HP
+        <div class="hp-bar-container"><div id="player-hp-bar" class="hp-bar"></div></div>
+    </div>
+    <div style="margin-top: 10px;">
+        😈 <span id="enemy-name">ハウンド(階層兵)</span>: <span id="enemy-hp">50</span> / <span id="enemy-max-hp">50</span> HP
+        <div class="hp-bar-container"><div id="enemy-hp-bar" class="hp-bar"></div></div>
+    </div>
 
-🏛 1,000G返済する
-🗺 ステージ選択
-🎒 バッグ ( 0/ 10)
-🏆 宝物
-💪 育成・特権
+    <hr>
+    
+    <div>
+        <button class="tab-btn active" id="tab-btn-battle" onclick="switchTab('battle')">戦闘・ステージ</button>
+        <button class="tab-btn" id="tab-btn-bag" onclick="switchTab('bag')">🎒 バッグ (<span id="bag-usage">0</span>/<span id="bag-max">10</span>)</button>
+        <button class="tab-btn" id="tab-btn-artifact" onclick="switchTab('artifact')">🏆 宝物</button>
+        <button class="tab-btn" id="tab-btn-train" onclick="switchTab('train')">💪 育成・特権</button>
+    </div>
 
-容量: 0 枠 💰 全て売却
+    <!-- 戦闘・ステージタブ -->
+    <div id="tab-battle" class="tab-content active">
+        <button onclick="repayDebt()">🏛 1,000G返済する</button>
+        <h4>🗺 ステージ選択</h4>
+        <div id="stage-selector"></div>
+    </div>
 
-#### ⚔ 武器一覧
-#### 🛡 防具一覧
+    <!-- バッグタブ -->
+    <div id="tab-bag" class="tab-content">
+        <h4>🎒 バッグ (<span id="bag-usage-tab">0</span>枠) <button onclick="sellAllInventory()">💰 全て売却</button></h4>
+        <h5>⚔ 武器一覧</h5>
+        <div id="inv-weapons">なし</div>
+        <h5>🛡 防具一覧</h5>
+        <div id="inv-armors">なし</div>
+    </div>
 
-#### 💪 通常訓練（転生でリセット）
-腕力 (+5 ATK) Lv: 0 | 100G / 訓練
-体力 (+30 HP) Lv: 0 | 100G / 訓練
-装甲 (+2 DEF) Lv: 0 | 150G / 訓練
-活法 (+2 回復) Lv: 1 | 200G / 訓練
+    <!-- 宝物タブ -->
+    <div id="tab-artifact" class="tab-content">
+        <h4>🏆 宝物一覧</h4>
+        <div id="artifact-list">未所持 (エネミーから確率ドロップ)</div>
+    </div>
 
-#### 💎 永続特権（リセットなし）
-転生時獲得予定の結晶: 0 個
-次元転生ゲート作動 (強くてニューゲーム)
-魂 of 練気 (ATK+20% / Lv: 0) [ 1 💎]
-不壊の意志 (DEF+20% / Lv:0) [1💎]
-黄金の祝福 (獲得G+25% / Lv:0) [1💎]
-神速の極意 (攻撃間隔短縮 / Lv:0/59) [2💎]
-殺意の波動 (クリ確率+1% / Lv:0/95) [2💎]
-破滅の凱歌 (クリ倍率+10% / Lv:0) [2💎]
-四次元の鞄 (バッグ+5枠 / Lv:0) [1💎]
-行商人契約 (溢れ売却額+20% / Lv:0/10) [3💎]
-竜の識別眼 (自動換装 / 状態:OFF / Lv:0/1) [5💎]
-精霊の加護 (回復量+20% / Lv:0) [2💎]
+    <!-- 育成・特権タブ -->
+    <div id="tab-train" class="tab-content">
+        <h4>💪 通常訓練（転生でリセット）</h4>
+        <p>腕力 (+5 ATK) Lv: <span id="lv-atk">0</span> | <button onclick="train('atk')">100G / 訓練</button></p>
+        <p>体力 (+30 HP) Lv: <span id="lv-hp">0</span> | <button onclick="train('hp')">100G / 訓練</button></p>
+        <p>装甲 (+2 DEF) Lv: <span id="lv-def">0</span> | <button onclick="train('def')">150G / 訓練</button></p>
+        <p>活法 (+2 回復) Lv: <span id="lv-regen">1</span> | <button onclick="train('regen')">200G / 訓練</button></p>
 
-⚠ セーブデータ強制初期化リセット
+        <h4>💎 永続特権（リセットなし）</h4>
+        <p>転生時獲得予定の結晶: <span id="pending-crystals">0</span> 個</p>
+        <button id="btn-rebirth" onclick="executeRebirth()">次元転生ゲート作動 (強くてニューゲーム)</button>
+        <ul>
+            <li>魂 of 練気 (ATK+20% / Lv: <span id="shop-atk-lv">0</span>) <button onclick="buyShop('atk')">[ <span id="price-sh-atk">1</span> 💎 ]</button></li>
+            <li>不壊の意志 (DEF+20% / Lv: <span id="shop-def-lv">0</span>) <button onclick="buyShop('def')">[ <span id="price-sh-def">1</span> 💎 ]</button></li>
+            <li>黄金の祝福 (獲得G+25% / Lv: <span id="shop-gold-lv">0</span>) <button onclick="buyShop('gold')">[ <span id="price-sh-gold">1</span> 💎 ]</button></li>
+            <li>神速の極意 (攻撃間隔短縮 / Lv: <span id="shop-spd-lv">0</span>/59) <button id="btn-sh-spd" onclick="buyShop('spd')">[ <span id="price-sh-spd">2</span> 💎 ]</button></li>
+            <li>殺意の波動 (クリ確率+1% / Lv: <span id="shop-crit-rate-lv">0</span>/95) <button id="btn-sh-crit-rate" onclick="buyShop('crit_rate')">[ <span id="price-sh-crit-rate">2</span> 💎 ]</button></li>
+            <li>破滅の凱歌 (クリ倍率+10% / Lv: <span id="shop-crit-dmg-lv">0</span>) <button onclick="buyShop('crit_dmg')">[ <span id="price-sh-crit-dmg">2</span> 💎 ]</button></li>
+            <li>四次元の鞄 (バッグ+5枠 / Lv: <span id="shop-bag-lv">0</span>) <button onclick="buyShop('bag')">[ <span id="price-sh-bag">1</span> 💎 ]</button></li>
+            <li>行商人契約 (溢れ売却額+20% / Lv: <span id="shop-autosell-lv">0</span>/10) <button id="btn-sh-autosell" onclick="buyShop('autosell')">[ <span id="price-sh-autosell">3</span> 💎 ]</button></li>
+            <li>竜の識別眼 (自動換装 / 状態: <span id="shop-autoequip-val">OFF</span> / Lv: <span id="shop-autoequip-lv">0</span>/1) <button id="btn-sh-autoequip" onclick="buyShop('autoequip')">[ 5 💎 ]</button></li>
+            <li>精霊の加護 (回復量+20% / Lv: <span id="shop-regen-lv">0</span>) <button onclick="buyShop('regen')">[ <span id="price-sh-regen">2</span> 💎 ]</button></li>
+        </ul>
+        <button style="color: red; margin-top: 20px;" onclick="resetGame()">⚠ セーブデータ強制初期化リセット</button>
+    </div>
 
-<script>
-var STAGES = [
-  { id: 1, name: "下水道の巣窟", multiplier: 1, art: "汚れた下水管", desc: "ゴールド獲得量 +15%", type: "gold" },
-  { id: 2, name: "路地裏の闇賭場", multiplier: 5, art: "イカサマのダイス", desc: "総攻撃力 +15%", type: "atk" },
-  { id: 3, name: "ジャンク鉄鋼山", multiplier: 25, art: "錆びた歯車", desc: "総防御力 +15%", type: "def" },
-  { id: 4, name: "強欲ゴブリン村", multiplier: 125, art: "黄金の入歯", desc: "ゴールド獲得量 +15%", type: "gold" },
-  { id: 5, name: "裏社会の闇ギルド", multiplier: 625, art: "黒の契約書", desc: "クリティカルダメージ倍率 +20%", type: "crit_dmg" },
-  { id: 6, name: "不夜城の魔塔", multiplier: 3125, art: "吸血鬼の牙", desc: "自動回復量 +25%", type: "regen_val" },
-  { id: 7, name: "亡者の眠る底石", multiplier: 15625, art: "静寂のドクロ", desc: "回復スピード 5%短縮", type: "regen_spd" },
-  { id: 8, name: "深淵の古戦場", multiplier: 78125, art: "折れた覇王の剣", desc: "総攻撃力 +25%", type: "atk" },
-  { id: 9, name: "邪神のマモン宮殿", multiplier: 390625, art: "無限の財布", desc: "転生時の獲得結晶 +20%", type: "crystal_up" },
-  { id: 10, name: "債務終焉の地", multiplier: 1953125, art: "白紙の契約書", desc: "全能力(ATK/DEF/REGEN) +15%", type: "all_up" }
-];
+    <h4>⚔ 戦闘ログ</h4>
+    <div id="log"></div>
 
-var defaultData = {
-  gold: 0, debt: 1000000000, rebirths: 0, lvAtk: 0, lvHp: 0, lvDef: 0, lvRegen: 1,
-  currentStageId: 1, stageMinor: 1, maxUnlockedStageId: 1, playerHp: 150, enemyHp: 50,
-  wAtk: 0, wName: "なし", aDef: 0, aName: "なし", crystal: 0,
-  shAtk: 0, shDef: 0, shGold: 0, shSpd: 0, shCritRate: 0, shCritDmg: 0, shBag: 0, shAutoSell: 0, shAutoEquip: 0, shRegen: 0,
-  weaponsBag: [], armorsBag: [],
-  artifacts: { 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0 }
-};
+    <script>
+    var STAGES = [
+      { id: 1, name: "下水道の巣窟", multiplier: 1, art: "汚れた下水管", desc: "ゴールド獲得量 +15%", type: "gold" },
+      { id: 2, name: "路地裏の闇賭場", multiplier: 5, art: "イカサマのダイス", desc: "総攻撃力 +15%", type: "atk" },
+      { id: 3, name: "ジャンク鉄鋼山", multiplier: 25, art: "錆びた歯車", desc: "総防御力 +15%", type: "def" },
+      { id: 4, name: "強欲ゴブリン村", multiplier: 125, art: "黄金の入歯", desc: "ゴールド獲得量 +15%", type: "gold" },
+      { id: 5, name: "裏社会の闇ギルド", multiplier: 625, art: "黒の契約書", desc: "クリティカルダメージ倍率 +20%", type: "crit_dmg" },
+      { id: 6, name: "不夜城の魔塔", multiplier: 3125, art: "吸血鬼の牙", desc: "自動回復量 +25%", type: "regen_val" },
+      { id: 7, name: "亡者の眠る底石", multiplier: 15625, art: "静寂のドクロ", desc: "回復スピード 5%短縮", type: "regen_spd" },
+      { id: 8, name: "深淵の古戦場", multiplier: 78125, art: "折れた覇王の剣", desc: "総攻撃力 +25%", type: "atk" },
+      { id: 9, name: "邪神のマモン宮殿", multiplier: 390625, art: "無限の財布", desc: "転生時の獲得結晶 +20%", type: "crystal_up" },
+      { id: 10, name: "債務終焉の地", multiplier: 1953125, art: "白紙の契約書", desc: "全能力(ATK/DEF/REGEN) +15%", type: "all_up" }
+    ];
 
-var game = defaultData;
-var playerInterval, enemyInterval, regenInterval;
+    var defaultData = {
+      gold: 0, debt: 1000000000, rebirths: 0, lvAtk: 0, lvHp: 0, lvDef: 0, lvRegen: 1,
+      currentStageId: 1, stageMinor: 1, maxUnlockedStageId: 1, playerHp: 150, enemyHp: 50,
+      wAtk: 0, wName: "なし", aDef: 0, aName: "なし", crystal: 0,
+      shAtk: 0, shDef: 0, shGold: 0, shSpd: 0, shCritRate: 0, shCritDmg: 0, shBag: 0, shAutoSell: 0, shAutoEquip: 0, shRegen: 0,
+      weaponsBag: [], armorsBag: [],
+      artifacts: { 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0 }
+    };
 
-function sanitizeGameData() {
-  if (!game || typeof game !== "object") game = defaultData;
-  if (isNaN(game.currentStageId) || game.currentStageId < 1 || game.currentStageId > 10) game.currentStageId = 1;
-  if (isNaN(game.stageMinor) || game.stageMinor < 1) game.stageMinor = 1;
-  if (isNaN(game.maxUnlockedStageId) || game.maxUnlockedStageId < 1) game.maxUnlockedStageId = 1;
-  if (isNaN(game.gold) || game.gold < 0) game.gold = 0;
-  if (isNaN(game.debt) || game.debt < 0) game.debt = 1000000000;
-  if (isNaN(game.crystal) || game.crystal < 0) game.crystal = 0;
-  if (isNaN(game.rebirths) || game.rebirths < 0) game.rebirths = 0;
-  if (isNaN(game.lvAtk) || game.lvAtk < 0) game.lvAtk = 0;
-  if (isNaN(game.lvHp) || game.lvHp < 0) game.lvHp = 0;
-  if (isNaN(game.lvDef) || game.lvDef < 0) game.lvDef = 0;
-  if (isNaN(game.lvRegen) || game.lvRegen < 0) game.lvRegen = 0;
-  if (isNaN(game.shAtk)) game.shAtk = 0;
-  if (isNaN(game.shDef)) game.shDef = 0;
-  if (isNaN(game.shGold)) game.shGold = 0;
-  if (isNaN(game.shSpd)) game.shSpd = 0;
-  if (isNaN(game.shCritRate)) game.shCritRate = 0;
-  if (isNaN(game.shCritDmg)) game.shCritDmg = 0;
-  if (isNaN(game.shBag)) game.shBag = 0;
-  if (isNaN(game.shAutoSell)) game.shAutoSell = 0;
-  if (isNaN(game.shAutoEquip)) game.shAutoEquip = 0;
-  if (isNaN(game.shRegen)) game.shRegen = 0;
-  if (!game.weaponsBag || !Array.isArray(game.weaponsBag)) game.weaponsBag = [];
-  if (!game.armorsBag || !Array.isArray(game.armorsBag)) game.armorsBag = [];
-  if (!game.artifacts || typeof game.artifacts !== "object" || Array.isArray(game.artifacts)) {
-    game.artifacts = { 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0 };
-  }
-}
+    var game = defaultData;
+    var playerInterval, enemyInterval, regenInterval;
 
-function loadGame() {
-  var saved = localStorage.getItem("legacy_idle_rpg_save");
-  if (saved) {
-    try {
-      var parsed = JSON.parse(saved);
-      if (parsed && typeof parsed === "object") {
-        game = Object.assign({}, defaultData, parsed);
-        sanitizeGameData();
-        return true;
+    function sanitizeGameData() {
+      if (!game || typeof game !== "object") game = defaultData;
+      if (isNaN(game.currentStageId) || game.currentStageId < 1 || game.currentStageId > 10) game.currentStageId = 1;
+      if (isNaN(game.stageMinor) || game.stageMinor < 1) game.stageMinor = 1;
+      if (isNaN(game.maxUnlockedStageId) || game.maxUnlockedStageId < 1) game.maxUnlockedStageId = 1;
+      if (isNaN(game.gold) || game.gold < 0) game.gold = 0;
+      if (isNaN(game.debt) || game.debt < 0) game.debt = 1000000000;
+      if (isNaN(game.crystal) || game.crystal < 0) game.crystal = 0;
+      if (isNaN(game.rebirths) || game.rebirths < 0) game.rebirths = 0;
+      if (isNaN(game.lvAtk) || game.lvAtk < 0) game.lvAtk = 0;
+      if (isNaN(game.lvHp) || game.lvHp < 0) game.lvHp = 0;
+      if (isNaN(game.lvDef) || game.lvDef < 0) game.lvDef = 0;
+      if (isNaN(game.lvRegen) || game.lvRegen < 0) game.lvRegen = 0;
+      if (isNaN(game.shAtk)) game.shAtk = 0;
+      if (isNaN(game.shDef)) game.shDef = 0;
+      if (isNaN(game.shGold)) game.shGold = 0;
+      if (isNaN(game.shSpd)) game.shSpd = 0;
+      if (isNaN(game.shCritRate)) game.shCritRate = 0;
+      if (isNaN(game.shCritDmg)) game.shCritDmg = 0;
+      if (isNaN(game.shBag)) game.shBag = 0;
+      if (isNaN(game.shAutoSell)) game.shAutoSell = 0;
+      if (isNaN(game.shAutoEquip)) game.shAutoEquip = 0;
+      if (isNaN(game.shRegen)) game.shRegen = 0;
+      if (!game.weaponsBag || !Array.isArray(game.weaponsBag)) game.weaponsBag = [];
+      if (!game.armorsBag || !Array.isArray(game.armorsBag)) game.armorsBag = [];
+      if (!game.artifacts || typeof game.artifacts !== "object" || Array.isArray(game.artifacts)) {
+        game.artifacts = { 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0 };
       }
-    } catch (e) {
-      console.error(e);
     }
-  }
-  game = Object.assign({}, defaultData);
-  sanitizeGameData();
-  return false;
-}
 
+    function loadGame() {
+      var saved = localStorage.getItem("legacy_idle_rpg_save");
+if (saved) {
+try {
+var parsed = JSON.parse(saved);
+if (parsed && typeof parsed === "object") {
+game = Object.assign({}, defaultData, parsed);
+sanitizeGameData();
+return true;
+}
+} catch (e) {
+console.error(e);
+}
+}
+game = Object.assign({}, defaultData);
+sanitizeGameData();
+return false;
+}
 function saveGame() {
-  sanitizeGameData();
-  localStorage.setItem("legacy_idle_rpg_save", JSON.stringify(game));
+sanitizeGameData();
+localStorage.setItem("legacy_idle_rpg_save", JSON.stringify(game));
 }
-
 var enemies = ["ハウンド", "インプ", "ゴブリン", "マフィア", "用心棒", "錬金術師", "ブラックオーク", "シャドウナイト", "デーモン債務兵"];
 var wPool = ["ボロい剣", "鉄のつるぎ", "ハクスラダガー", "シャドウブレード", "レガシーソード"];
 var aPool = ["布の服", "レザーアーマー", "鉄の胸当て", "合金 of 硬質鎧", "ダークプレート"];
-
 window.switchTab = function(tabId) {
-  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-  document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
-  var targetBtn = document.getElementById('tab-btn-' + tabId);
-  var targetContent = document.getElementById('tab-' + tabId);
-  if (targetBtn) targetBtn.classList.add('active');
-  if (targetContent) targetContent.classList.add('active');
+document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+var targetBtn = document.getElementById('tab-btn-' + tabId);
+var targetContent = document.getElementById('tab-' + tabId);
+if (targetBtn) targetBtn.classList.add('active');
+if (targetContent) targetContent.classList.add('active');
 };
-
 function getArtBonus(type) {
-  var bonus = 0;
-  STAGES.forEach(function(st) {
-    var count = game.artifacts[st.id] || 0;
-    if (st.type === type) {
-      if (type === "gold" || type === "atk" || type === "def" || type === "regen_val" || type === "crystal_up") bonus += count * 0.15;
-      if (type === "crit_dmg") bonus += count * 0.20;
-      if (type === "regen_spd") bonus += count * 0.05;
-    }
-    if (st.type === "all_up" && (type === "atk" || type === "def" || type === "regen_val")) bonus += count * 0.15;
-  });
-  return bonus;
+var bonus = 0;
+STAGES.forEach(function(st) {
+var count = game.artifacts[st.id] || 0;
+if (st.type === type) {
+if (type === "gold" || type === "atk" || type === "def" || type === "regen_val" || type === "crystal_up") bonus += count * 0.15;
+if (type === "crit_dmg") bonus += count * 0.20;
+if (type === "regen_spd") bonus += count * 0.05;
 }
-
+if (st.type === "all_up" && (type === "atk" || type === "def" || type === "regen_val")) bonus += count * 0.15;
+});
+return bonus;
+}
 function getMult() {
-  return Math.pow(1.5, game.rebirths);
+return Math.pow(1.5, game.rebirths);
 }
-
-/* 💡 修正箇所：タイポを直し安全な関数定義に修正 */
 function getMaxHp() {
-  return Math.floor((150 + game.lvHp * 30) * getMult());
+return Math.floor((150 + game.lvHp * 30) * getMult());
 }
-
 function getAtk() {
-  var rawWAtk = isNaN(game.wAtk) || game.wAtk < 0 ? 0 : game.wAtk;
-  var rawLvAtk = isNaN(game.lvAtk) || game.lvAtk < 0 ? 0 : game.lvAtk;
-  var base = (10 + rawLvAtk * 5 + rawWAtk) * getMult();
-  return Math.floor(base * (1 + game.shAtk * 0.2) * (1 + getArtBonus("atk")));
+var rawWAtk = isNaN(game.wAtk) || game.wAtk < 0 ? 0 : game.wAtk;
+var rawLvAtk = isNaN(game.lvAtk) || game.lvAtk < 0 ? 0 : game.lvAtk;
+var base = (10 + rawLvAtk * 5 + rawWAtk) * getMult();
+return Math.floor(base * (1 + game.shAtk * 0.2) * (1 + getArtBonus("atk")));
 }
-
 function getDef() {
-  var rawADef = isNaN(game.aDef) || game.aDef < 0 ? 0 : game.aDef;
-  var rawLvDef = isNaN(game.lvDef) || game.lvDef < 0 ? 0 : game.lvDef;
-  var base = (0 + rawLvDef * 2 + rawADef) * getMult();
-  return Math.floor(base * (1 + game.shDef * 0.2) * (1 + getArtBonus("def")));
+var rawADef = isNaN(game.aDef) || game.aDef < 0 ? 0 : game.aDef;
+var rawLvDef = isNaN(game.lvDef) || game.lvDef < 0 ? 0 : game.lvDef;
+var base = (0 + rawLvDef * 2 + rawADef) * getMult();
+return Math.floor(base * (1 + game.shDef * 0.2) * (1 + getArtBonus("def")));
 }
-
 function getRegenVal() {
-  var rawLvRegen = isNaN(game.lvRegen) || game.lvRegen < 0 ? 0 : game.lvRegen;
-  var base = rawLvRegen * 2;
-  return Math.floor(base * (1 + game.shRegen * 0.2) * (1 + getArtBonus("regen_val")));
+var rawLvRegen = isNaN(game.lvRegen) || game.lvRegen < 0 ? 0 : game.lvRegen;
+var base = rawLvRegen * 2;
+return Math.floor(base * (1 + game.shRegen * 0.2) * (1 + getArtBonus("regen_val")));
 }
-
 function getRegenSpeed() {
-  var speed = 1000 * Math.pow(0.95, getArtBonus("regen_spd") / 0.05);
-  return Math.max(200, Math.floor(speed));
+var speed = 1000 * Math.pow(0.95, getArtBonus("regen_spd") / 0.05);
+return Math.max(200, Math.floor(speed));
 }
-
 function getCritRate() {
-  return 5 + game.shCritRate * 1;
+return 5 + game.shCritRate * 1;
 }
-
 function getCritDmgMultiplier() {
-  return 1.5 + game.shCritDmg * 0.1 + getArtBonus("crit_dmg");
+return 1.5 + game.shCritDmg * 0.1 + getArtBonus("crit_dmg");
 }
-
 function getBagMax() {
-  return 10 + game.shBag * 5;
+return 10 + game.shBag * 5;
 }
-
 function getAutoSellBonus() {
-  return 1.0 + game.shAutoSell * 0.2;
+return 1.0 + game.shAutoSell * 0.2;
 }
-
 function getActiveStage() {
-  return STAGES.find(function(s) { return s.id === game.currentStageId; }) || STAGES[0];
+return STAGES.find(function(s) { return s.id === game.currentStageId; }) || STAGES[0];
 }
-
 function getE_MaxHp() {
-  var activeSt = getActiveStage();
-  var b = 50 * activeSt.multiplier;
-  return game.stageMinor === 100 ? (b * 4.0) : b;
+var activeSt = getActiveStage();
+var b = 50 * activeSt.multiplier;
+return game.stageMinor === 100 ? (b * 4.0) : b;
 }
-
 function getE_Atk() {
-  return Math.floor(5 * getActiveStage().multiplier);
+return Math.floor(5 * getActiveStage().multiplier);
 }
-
 function getE_Gold() {
-  var b = 20 * getActiveStage().multiplier;
-  return Math.floor(b * (1 + game.shGold * 0.25) * (1 + getArtBonus("gold")));
+var b = 20 * getActiveStage().multiplier;
+return Math.floor(b * (1 + game.shGold * 0.25) * (1 + getArtBonus("gold")));
 }
-
 function calculateCrystals() {
-  var totalProgress = (game.maxUnlockedStageId - 1) * 100 + 10;
-  if (totalProgress < 100) return 0;
-  return Math.floor(Math.floor(totalProgress / 35) * (1 + getArtBonus("crystal_up")));
+var totalProgress = (game.maxUnlockedStageId - 1) * 100 + 10;
+if (totalProgress < 100) return 0;
+return Math.floor(Math.floor(totalProgress / 35) * (1 + getArtBonus("crystal_up")));
 }
-
 function getAttackInterval() {
-  var frames = 60 - game.shSpd;
-  return Math.max(1, frames) * Math.floor(1000 / 60);
+var frames = 60 - game.shSpd;
+return Math.max(1, frames) * Math.floor(1000 / 60);
 }
-
 function checkPlayerDeath() {
-  if (game.playerHp <= 0) {
-    game.playerHp = getMaxHp();
-    game.enemyHp = getE_MaxHp();
-    addLog("☠ 敗北！HPを全回復して再挑戦します。");
-    updateUI();
-    return true;
-  }
-  return false;
+if (game.playerHp <= 0) {
+game.playerHp = getMaxHp();
+game.enemyHp = getE_MaxHp();
+addLog("☠ 敗北！HPを全回復して再挑戦します。");
+updateUI();
+return true;
 }
-
+return false;
+}
 function addLog(t) {
-  var l = document.getElementById("log");
-  if(!l) return;
-  var div = document.createElement("div");
-  div.textContent = t;
-  l.appendChild(div);
-  if(l.childNodes.length > 25) l.removeChild(l.firstChild);
-  l.scrollTop = l.scrollHeight;
+var l = document.getElementById("log");
+if(!l) return;
+var div = document.createElement("div");
+div.textContent = t;
+l.appendChild(div);
+if(l.childNodes.length > 25) l.removeChild(l.firstChild);
+l.scrollTop = l.scrollHeight;
 }
-
 window.changeStage = function(id) {
-  game.currentStageId = id;
-  game.stageMinor = 1;
-  game.enemyHp = getE_MaxHp();
-  addLog('🗺 ステージを「' + getActiveStage().name + '」に変更しました。');
-  updateUI();
-  saveGame();
+game.currentStageId = id;
+game.stageMinor = 1;
+game.enemyHp = getE_MaxHp();
+addLog('🗺 ステージを「' + getActiveStage().name + '」に変更しました。');
+updateUI();
+saveGame();
 };
-
 function renderStageButtons() {
-  var box = document.getElementById("stage-selector");
-  if(!box) return;
-  var html = "";
-  STAGES.forEach(function(st) {
-    var isLocked = st.id > game.maxUnlockedStageId;
-    var activeClass = game.currentStageId === st.id ? "active" : "";
-    var lockIcon = isLocked ? ' 🔒' : '';
-    html += ' <button class="stage-btn ' + activeClass + '" onclick="changeStage(' + st.id + ')" ' + (isLocked ? 'disabled' : '') + '>' + st.id + '. ' + st.name + ' (x' + st.multiplier.toLocaleString() + ')' + lockIcon + '</button>';
-  });
-  box.innerHTML = html;
+var box = document.getElementById("stage-selector");
+if(!box) return;
+var html = "";
+STAGES.forEach(function(st) {
+var isLocked = st.id > game.maxUnlockedStageId;
+var activeClass = game.currentStageId === st.id ? "active" : "";
+var lockIcon = isLocked ? ' 🔒' : '';
+html += ' <button class="stage-btn ' + activeClass + '" onclick="changeStage(' + st.id + ')" ' + (isLocked ? 'disabled' : '') + '>' + st.id + '. ' + st.name + ' (x' + st.multiplier.toLocaleString() + ')' + lockIcon + '';
+});
+box.innerHTML = html;
 }
-
 function renderArtifacts() {
-  var box = document.getElementById("artifact-list");
-  if(!box) return;
-  var html = "";
-  STAGES.forEach(function(st) {
-    var count = game.artifacts[st.id] || 0;
-    if(count > 0) {
-      html += '<div>🏆 ' + st.art + ' x' + count + ' (' + st.desc + ')</div>';
-    }
-  });
-  if(html === "") html = "未所持 (エネミーから確率ドロップ)";
-  box.innerHTML = html;
+var box = document.getElementById("artifact-list");
+if(!box) return;
+var html = "";
+STAGES.forEach(function(st) {
+var count = game.artifacts[st.id] || 0;
+if(count > 0) {
+html += '🏆 ' + st.art + ' x' + count + ' (' + st.desc + ')';
 }
-
+});
+if(html === "") html = "未所持 (エネミーから確率ドロップ)";
+box.innerHTML = html;
+}
 function renderInventory() {
 var wBox = document.getElementById("inv-weapons");
 if(wBox) {
