@@ -36,25 +36,32 @@ button:disabled{background:#444;color:#777;cursor:not-allowed}
 .combat-wrap{position:relative;overflow:hidden}
 .float-layer{pointer-events:none;position:absolute;inset:0;z-index:20;overflow:hidden}
 .float-text{position:absolute;font-weight:900;font-size:16px;animation:floatUp .9s ease-out forwards;text-shadow:0 1px 3px #000,0 0 6px #000;white-space:nowrap}
-.float-text.dmg-p{color:#ff5252}
-.float-text.dmg-e{color:#ffffff}
-.float-text.crit{color:#ffeb3b;font-size:20px}
-.float-text.heal{color:#69f0ae}
-.float-text.gold{color:#ffd700;font-size:18px}
-@keyframes floatUp{
-0%{opacity:1;transform:translateY(0) scale(1)}
-70%{opacity:1}
-100%{opacity:0;transform:translateY(-55px) scale(1.15)}
-}
-.build-card{border:1px solid #444;border-radius:6px;padding:8px;margin-bottom:6px;cursor:pointer;font-size:12px}
-.build-card.selected{border-color:#ffd700;background:#2a2500}
-.build-card h5{margin:0 0 3px;color:#ffd700;font-size:13px}
+.float-text.dmg-p{color:#ff5252}.float-text.dmg-e{color:#fff}
+.float-text.crit{color:#ffeb3b;font-size:20px}.float-text.heal{color:#69f0ae}.float-text.gold{color:#ffd700;font-size:18px}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-55px)}}
 .ach-item{border-bottom:1px solid #333;padding:6px 0;font-size:12px}
-.ach-item.done{color:#ffd700}
-.ach-item .reward{color:#81c784;font-size:11px}
+.ach-item.done{color:#ffd700}.ach-item .reward{color:#81c784;font-size:11px}
 .effect-tag{display:inline-block;background:#4a148c;color:#e1bee7;font-size:10px;padding:1px 5px;border-radius:3px;margin-left:3px}
-#rebirth-panel{position:relative;z-index:30}
-#art-summary{font-size:12px;line-height:1.6;color:#ffca28;margin-top:6px}
+/* 転生モーダル（画面中央オーバーレイ） */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);
+  z-index:1000;align-items:center;justify-content:center;padding:16px;
+}
+.modal-overlay.show{display:flex}
+.modal-box{
+  width:100%;max-width:420px;max-height:90vh;overflow-y:auto;
+  background:#1a1a1a;border:2px solid #ffd700;border-radius:12px;padding:16px;
+  box-shadow:0 8px 32px rgba(0,0,0,.8);
+}
+.build-card{
+  border:2px solid #444;border-radius:8px;padding:10px 12px;margin-bottom:8px;
+  cursor:pointer;font-size:13px;background:#222;user-select:none;
+  transition:border-color .15s, background .15s;
+}
+.build-card:hover{border-color:#888}
+.build-card.selected{border-color:#ffd700;background:#3d3500}
+.build-card h5{margin:0 0 4px;color:#ffd700;font-size:14px;pointer-events:none}
+.build-card p{margin:0;color:#bbb;font-size:12px;pointer-events:none}
 </style>
 </head>
 <body>
@@ -83,7 +90,7 @@ button:disabled{background:#444;color:#777;cursor:not-allowed}
 <div>⚡ 攻撃 <span id="atk-speed">1.0</span>/s</div>
 </div>
 <div style="margin-top:10px;text-align:center">
-<button id="btn-rebirth" onclick="window.openRebirthPanel()">次元転生 (+<span id="pending-crystals">0</span>💎)</button>
+<button id="btn-rebirth" onclick="window.openRebirthPanel()">エリア3踏破で解放</button>
 </div>
 </div>
 
@@ -150,7 +157,7 @@ button:disabled{background:#444;color:#777;cursor:not-allowed}
 <div style="display:flex;justify-content:space-between;align-items:center">
 <h4 style="margin:0">聖遺物</h4><button onclick="window.toggleArtSummary()">一覧</button>
 </div>
-<div id="art-summary" style="display:none"></div>
+<div id="art-summary" style="display:none;font-size:12px;color:#ffca28;margin-top:6px"></div>
 <div id="artifact-list" style="font-size:12px;color:#ffca28;margin-top:8px">未所持</div>
 </div>
 
@@ -197,16 +204,22 @@ button:disabled{background:#444;color:#777;cursor:not-allowed}
 <h4>実績</h4>
 <div id="achieve-list"></div>
 </div>
+</div>
 
-<div id="rebirth-panel" class="status-box" style="display:none">
-<h3>🔄 転生ビルド選択</h3>
-<p style="font-size:12px;text-align:center;color:#aaa">結晶 +<span id="rebirth-pending">0</span> ／ 次倍率 ×<span id="rebirth-next-mult">1.00</span></p>
-<div id="build-list"></div>
-<div style="display:flex;gap:8px;margin-top:8px">
-<button class="btn-green" style="flex:1" onclick="window.confirmRebirth()">転生する</button>
-<button class="btn-danger" style="flex:1" onclick="window.closeRebirthPanel()">キャンセル</button>
-</div>
-</div>
+<!-- 転生ビルド選択モーダル（画面中央） -->
+<div id="rebirth-overlay" class="modal-overlay">
+  <div class="modal-box">
+    <h3 style="margin-bottom:4px">🔄 転生 — ビルド選択</h3>
+    <p style="text-align:center;font-size:13px;color:#ccc;margin:0 0 12px">
+      獲得結晶 <b style="color:#ce93d8" id="rebirth-pending">0</b> 💎
+      ／ 次倍率 ×<b id="rebirth-next-mult">1.00</b>
+    </p>
+    <div id="build-list"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn-green" style="flex:1;padding:12px;font-size:14px" onclick="window.confirmRebirth()">このビルドで転生</button>
+      <button class="btn-danger" style="flex:1;padding:12px" onclick="window.closeRebirthPanel()">キャンセル</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -227,7 +240,7 @@ var STAGES=[
 ];
 
 var BUILDS={
-none:{name:"なし",desc:"特典なし"},
+none:{name:"なし",desc:"特典なし（バランス）"},
 berserker:{name:"狂戦士",desc:"ATK+60% / DEF半減 / 低HPで攻撃上昇"},
 tank:{name:"重装",desc:"DEF+80% / 回復+50% / 攻撃半速 / 反撃"},
 merchant:{name:"商人",desc:"ゴールド×2.5 / ドロップUP / 戦闘-30%"},
@@ -282,7 +295,7 @@ artifacts:{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0}
 var game=clone(defaultData);
 var enemy={maxHp:50,atk:5,def:0,regen:0};
 var playerInterval=null,enemyInterval=null,regenInterval=null,enemyRegenInterval=null,respawnTimeout=null;
-var isRespawning=false,buyAmount=1,artSummaryOpen=false,rebirthPanelKeepBuild=false;
+var isRespawning=false,buyAmount=1,artSummaryOpen=false;
 
 var enemies=["ハウンド","インプ","ゴブリン","マフィア","用心棒","錬金術師","ブラックオーク","シャドウナイト","デーモン債務兵"];
 var wPool=["ボロい剣","鉄のつるぎ","ハクスラダガー","シャドウブレード","レガシーソード"];
@@ -293,12 +306,14 @@ function clone(o){return JSON.parse(JSON.stringify(o))}
 function $(id){return document.getElementById(id)}
 function S(id,v){var e=$(id);if(e)e.innerText=v}
 
+/* エリア3クリア = maxUnlockedStageId >= 4（エリア3の100F踏破でエリア4解放） */
+function isRebirthUnlocked(){
+  return countCleared(game)>=3 || (game.maxUnlockedStageId||1)>=4;
+}
+
 function countCleared(g){
-  // maxUnlockedStageId が N なら 1〜N-1 は100Fクリア済み
   var n=Math.max(0,(g.maxUnlockedStageId||1)-1);
-  // 現在エリアが100Fなら+1（最終エリア含む）
   if(!g.inInfinite && (g.stageMinor||1)>=100) n=Math.max(n, g.currentStageId||1);
-  // stageFloors に100以上があれば反映
   if(g.stageFloors){
     for(var i=1;i<=10;i++){
       if((g.stageFloors[String(i)]||0)>=100) n=Math.max(n,i);
@@ -306,7 +321,6 @@ function countCleared(g){
   }
   return Math.min(10,n);
 }
-
 function getTotalFloors(g){
   var sum=0, maxU=g.maxUnlockedStageId||1;
   for(var i=1;i<=10;i++){
@@ -320,11 +334,7 @@ function getTotalFloors(g){
   return sum;
 }
 
-/* ===== 倍率・ボーナス ===== */
-function getMult(){
-  // 1 + ln(転生回数+1) 上限なし
-  return 1+Math.log((game.rebirths||0)+1);
-}
+function getMult(){return 1+Math.log((game.rebirths||0)+1)}
 function getArtBonus(type){
   var bonus=0;
   STAGES.forEach(function(st){
@@ -355,7 +365,6 @@ function getEquipEffect(id){
   });
   return sum;
 }
-
 function effLv(stat){
   if(game.inInfinite) return stat==="regen"?1:0;
   if(stat==="atk") return game.lvAtk;
@@ -363,7 +372,6 @@ function effLv(stat){
   if(stat==="def") return game.lvDef;
   return game.lvRegen;
 }
-
 function getMaxHp(){
   var base=(150+effLv("hp")*30+(game.cHp||0))*getMult()*(1+getAchBonus("all"));
   if(game.build==="berserker") base*=0.85;
@@ -441,7 +449,6 @@ function rollEnemy(){
   enemy.regen=Math.max(0,Math.floor(b.regen*rand(0.7,1.3)));
   game.enemyHp=enemy.maxHp;
 }
-
 function minDmg(){
   var e=enemy.atk||1;
   return Math.max(1,Math.floor(e*(game.inInfinite?0.06:(0.03+game.currentStageId*0.007))));
@@ -467,24 +474,19 @@ function getGold(){
   g*=(1+getEquipEffect("gold_kill")/100);
   return Math.floor(g);
 }
-
-/* 結晶: クリアエリア重視 + 総階数は中程度 */
 function calculateCrystals(){
   if(game.inInfinite) return 0;
-  var cleared=countCleared(game);
-  var floors=getTotalFloors(game);
-  var base=cleared*20 + Math.floor(floors/50);
+  if(!isRebirthUnlocked()) return 0;
+  var base=countCleared(game)*20 + Math.floor(getTotalFloors(game)/50);
   if(base<=0) return 0;
   return Math.floor(base*(1+getArtBonus("crystal_up")+getAchBonus("crystal")));
 }
-
 function getAtkInterval(){
   var f=Math.max(1,60-game.shSpd);
   if(game.build==="tank") f=Math.floor(f*2);
   return f*Math.floor(1000/60);
 }
 function getRespawnDelay(){return Math.max(1,60-game.shRespawn)*Math.floor(1000/60)}
-
 function getTotalPower(){
   var mult=getMult();
   var atk=Math.floor((10+Math.max(0,game.wAtk||0))*mult*(1+game.shAtk*0.2)*(1+getArtBonus("atk")));
@@ -501,42 +503,34 @@ function addLog(t){
   while(l.childNodes.length>25) l.removeChild(l.firstChild);
   l.scrollTop=l.scrollHeight;
 }
-
-/* ===== ポップアップ（確実に見える位置） ===== */
 function spawnFloat(text, cls, side){
   var layer=$("float-layer"); if(!layer) return;
   var el=document.createElement("div");
   el.className="float-text "+cls;
   el.textContent=text;
-  // side: left / right / center
-  var left = side==="left" ? (15+Math.random()*20) : side==="right" ? (55+Math.random()*25) : (35+Math.random()*30);
-  el.style.left=left+"%";
+  el.style.left=(side==="left"?15+Math.random()*20:side==="right"?55+Math.random()*25:35+Math.random()*30)+"%";
   el.style.top=(35+Math.random()*25)+"%";
   layer.appendChild(el);
   setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },950);
 }
-
 function saveFloor(){ if(!game.inInfinite) game.stageFloors[String(game.currentStageId)]=game.stageMinor }
-
 function checkAchievements(){
   ACHIEVEMENTS.forEach(function(a){
     if(game.achievements[a.id]) return;
     if(a.check(game)){
       game.achievements[a.id]=true;
-      addLog("🏅 実績: "+a.name+"（"+a.text+"）");
+      addLog("🏅 実績: "+a.name);
       spawnFloat("🏅"+a.name,"heal","center");
     }
   });
 }
-
 function effectLabel(e){
   if(!e) return "";
   var def=EFFECTS.find(function(x){return x.id===e.id});
-  return def ? def.name+"("+def.fmt(e.v)+")" : e.id;
+  return def?def.name+"("+def.fmt(e.v)+")":e.id;
 }
-
 function rollEffect(){
-  if(Math.random()>0.28) return null; // 28%
+  if(Math.random()>0.28) return null;
   var e=EFFECTS[Math.floor(Math.random()*EFFECTS.length)];
   var v;
   if(e.id==="lifesteal") v=3+Math.floor(Math.random()*8);
@@ -550,19 +544,15 @@ function rollEffect(){
   game.stats.foundEffect=true;
   return {id:e.id,v:v};
 }
-
 function generatePlus(){
   var min=getDropMinPlus(), max=getDropMaxPlus();
   if(min>max) min=max;
   return Math.min(max, Math.max(min, min+Math.floor(Math.pow(Math.random(),2.8)*(max-min+1))));
 }
 
-/* ===== セーブ ===== */
 function sanitize(){
   if(!game||typeof game!=="object") game=clone(defaultData);
-  Object.keys(defaultData).forEach(function(k){
-    if(game[k]===undefined) game[k]=clone(defaultData[k]);
-  });
+  Object.keys(defaultData).forEach(function(k){ if(game[k]===undefined) game[k]=clone(defaultData[k]); });
   if(!game.achievements) game.achievements={};
   if(!game.stats) game.stats={foundEffect:false,kills:0};
   if(!game.stageFloors) game.stageFloors={};
@@ -570,9 +560,7 @@ function sanitize(){
   if(!Array.isArray(game.armorsBag)) game.armorsBag=[];
   if(!Array.isArray(game.accessoriesBag)) game.accessoriesBag=[];
   if(!game.build) game.build="none";
-  ["gold","crystal","rebirths","lvAtk","lvHp","lvDef","lvRegen"].forEach(function(k){
-    if(isNaN(game[k])||game[k]<0) game[k]=defaultData[k];
-  });
+  if(!game.pendingBuild) game.pendingBuild="none";
 }
 function loadGame(){
   try{
@@ -583,7 +571,6 @@ function loadGame(){
 }
 function saveGame(){ sanitize(); localStorage.setItem("legacy_idle_rpg_save", JSON.stringify(game)); }
 
-/* ===== UIタブ ===== */
 window.switchTab=function(id){
   document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active")});
   document.querySelectorAll(".tab-content").forEach(function(c){c.classList.remove("active")});
@@ -592,18 +579,14 @@ window.switchTab=function(id){
   if(c) c.classList.add("active");
   if(id==="achieve") renderAchievements();
 };
-
 window.setBuyAmount=function(a){ buyAmount=a; updateBuyBtns(); updateUI(); };
 function updateBuyBtns(){
   ["1","10","100","max"].forEach(function(v){
     var on=(buyAmount==v)||(v==="max"&&buyAmount==="max");
-    ["train-buy-"+v,"shop-buy-"+v].forEach(function(id){
-      var e=$(id); if(e) e.classList.toggle("active", on);
-    });
+    ["train-buy-"+v,"shop-buy-"+v].forEach(function(id){ var e=$(id); if(e) e.classList.toggle("active", on); });
   });
 }
 
-/* ===== 戦闘 ===== */
 function playerLoop(){
   try{
     if(isRespawning||checkDeath()) return;
@@ -614,29 +597,21 @@ function playerLoop(){
     var dmg=dmgDeal(raw);
     game.enemyHp-=dmg;
     spawnFloat((crit?"CRIT ":"")+"-"+dmg, crit?"crit":"dmg-e", "right");
-
     var ls=getEquipEffect("lifesteal");
     if(ls>0){
       var heal=Math.floor(dmg*ls/100);
-      if(heal>0){
-        game.playerHp=Math.min(getMaxHp(), game.playerHp+heal);
-        spawnFloat("+"+heal,"heal","left");
-      }
+      if(heal>0){ game.playerHp=Math.min(getMaxHp(),game.playerHp+heal); spawnFloat("+"+heal,"heal","left"); }
     }
-
     if(game.enemyHp<=0){
       var g=getGold();
-      game.gold+=g;
-      game.totalGoldEarned=(game.totalGoldEarned||0)+g;
+      game.gold+=g; game.totalGoldEarned=(game.totalGoldEarned||0)+g;
       spawnFloat("+"+g+"G","gold","center");
       addLog("⚔ 撃破 +"+g+"G");
       game.stats.kills=(game.stats.kills||0)+1;
       if(!game.inInfinite) handleDrop();
-
       if(game.inInfinite){
         game.infiniteFloor++;
         if(game.infiniteFloor>game.bestInfinite) game.bestInfinite=game.infiniteFloor;
-        addLog("🌀 "+game.infiniteFloor+"F");
       }else{
         if(game.stageMinor===100){
           addLog("🎉 100階クリア");
@@ -646,16 +621,12 @@ function playerLoop(){
             game.currentStageId=game.maxUnlockedStageId;
             game.stageMinor=game.stageFloors[String(game.currentStageId)]||1;
             addLog("➡ "+getActiveStage().name);
-          }else{
-            game.stageMinor=Math.min(100, game.stageMinor+1);
-          }
-        }else{
-          game.stageMinor++;
-        }
+            if(isRebirthUnlocked()) addLog("✨ 転生が解放されました！");
+          }else game.stageMinor=Math.min(100,game.stageMinor+1);
+        }else game.stageMinor++;
         saveFloor();
       }
-      isRespawning=true;
-      game.enemyHp=0;
+      isRespawning=true; game.enemyHp=0;
       clearTimeout(respawnTimeout);
       respawnTimeout=setTimeout(function(){ isRespawning=false; rollEnemy(); updateUI(); }, getRespawnDelay());
       checkAchievements();
@@ -663,7 +634,6 @@ function playerLoop(){
     updateUI(); saveGame();
   }catch(err){ console.error(err); }
 }
-
 function enemyLoop(){
   if(isRespawning||game.playerHp<=0||game.enemyHp<=0) return;
   var dmg=dmgTaken();
@@ -673,33 +643,22 @@ function enemyLoop(){
     var c=Math.floor(getDef()*0.15);
     if(c>0&&game.enemyHp>0){ game.enemyHp-=c; spawnFloat("-"+c,"dmg-e","right"); }
   }
-  checkDeath();
-  updateUI(); saveGame();
+  checkDeath(); updateUI(); saveGame();
 }
-
 function checkDeath(){
   if(game.playerHp>0) return false;
   if(game.inInfinite){
-    addLog("☠ 無限回廊敗北 → 通常エリアへ");
-    clearTimeout(respawnTimeout); isRespawning=false;
-    game.inInfinite=false;
-    game.playerHp=getMaxHp();
-    rollEnemy();
+    addLog("☠ 無限回廊敗北 → 通常エリア");
+    clearTimeout(respawnTimeout); isRespawning=false; game.inInfinite=false;
+    game.playerHp=getMaxHp(); rollEnemy();
     $("btn-leave-infinite").style.display="none";
-    startTimers(); updateUI(); saveGame();
-    return true;
+    startTimers(); updateUI(); saveGame(); return true;
   }
-  game.stageMinor=Math.max(1, game.stageMinor-10);
-  saveFloor();
+  game.stageMinor=Math.max(1,game.stageMinor-10); saveFloor();
   addLog("⬇ 敗北 -10F → "+game.stageMinor+"F");
-  game.playerHp=getMaxHp();
-  isRespawning=false;
-  clearTimeout(respawnTimeout);
-  rollEnemy();
-  updateUI(); saveGame();
-  return true;
+  game.playerHp=getMaxHp(); isRespawning=false;
+  clearTimeout(respawnTimeout); rollEnemy(); updateUI(); saveGame(); return true;
 }
-
 function handleDrop(){
   var chance=0.28*(game.build==="merchant"?1.5:1)*(1+getAchBonus("drop"));
   if(Math.random()>chance) return;
@@ -718,7 +677,6 @@ function handleDrop(){
       var old={name:game.wName,plus:game.wPlus,stat:game.wAtk,value:Math.floor(game.wAtk*5),effect:game.wEffect};
       game.wName=name; game.wPlus=plus; game.wAtk=stat; game.wEffect=eff;
       if(old.stat>0) pushItem("w",old);
-      addLog("🧠 装備 "+name+(eff?" ["+effectLabel(eff)+"]":""));
     }else pushItem("w",obj);
   }else if(type==="a"){
     var name=aPool[q], stat=Math.floor((q+1)*3+game.currentStageId*2+plus*0.7);
@@ -739,17 +697,12 @@ function handleDrop(){
   }
   if(eff) addLog("✨ 特殊効果 "+effectLabel(eff));
 }
-
 function pushItem(type,obj){
   var max=getBagMax();
   var bag=type==="w"?game.weaponsBag:type==="a"?game.armorsBag:game.accessoriesBag;
-  if(bag.length>=max){
-    game.gold+=Math.floor(obj.value*(1+game.shAutoSell*0.05));
-  }else{
-    bag.push(obj);
-  }
+  if(bag.length>=max) game.gold+=Math.floor(obj.value*(1+game.shAutoSell*0.05));
+  else bag.push(obj);
 }
-
 function startTimers(){
   if(playerInterval) clearInterval(playerInterval);
   if(enemyInterval) clearInterval(enemyInterval);
@@ -758,67 +711,42 @@ function startTimers(){
   if(enemyRegenInterval) clearInterval(enemyRegenInterval);
   enemyRegenInterval=setInterval(function(){
     if(isRespawning||game.enemyHp<=0) return;
-    if(enemy.regen>0&&game.enemyHp<enemy.maxHp){
-      game.enemyHp=Math.min(enemy.maxHp, game.enemyHp+enemy.regen);
-      updateUI();
-    }
+    if(enemy.regen>0&&game.enemyHp<enemy.maxHp){ game.enemyHp=Math.min(enemy.maxHp,game.enemyHp+enemy.regen); updateUI(); }
   },1000);
 }
 function startRegen(){
   if(regenInterval) clearInterval(regenInterval);
   regenInterval=setInterval(function(){
     var r=getRegenVal();
-    if(r>0&&game.playerHp>0&&game.playerHp<getMaxHp()){
-      game.playerHp=Math.min(getMaxHp(), game.playerHp+r);
-      updateUI();
-    }
+    if(r>0&&game.playerHp>0&&game.playerHp<getMaxHp()){ game.playerHp=Math.min(getMaxHp(),game.playerHp+r); updateUI(); }
   }, getRegenSpeed());
 }
 
-/* ===== 訓練・ショップ ===== */
 window.train=function(t){
   if(game.inInfinite) return;
-  var key={atk:"lvAtk",hp:"lvHp",def:"lvDef",regen:"lvRegen"}[t];
-  if(!key) return;
+  var key={atk:"lvAtk",hp:"lvHp",def:"lvDef",regen:"lvRegen"}[t]; if(!key) return;
   var lv=game[key], total=0, n=0, limit=buyAmount==="max"?99999:Number(buyAmount);
-  for(var i=0;i<limit;i++){
-    var c=getTrainCost(t,lv+i);
-    if(total+c>game.gold) break;
-    total+=c; n++;
-  }
+  for(var i=0;i<limit;i++){ var c=getTrainCost(t,lv+i); if(total+c>game.gold) break; total+=c; n++; }
   if(n<=0) return;
   game.gold-=total; game[key]+=n;
   if(t==="hp") game.playerHp=getMaxHp();
   updateUI(); saveGame();
 };
-
 function shopInfo(type){
-  var map={
-    atk:[game.shAtk,1,1/0],def:[game.shDef,1,1/0],gold:[game.shGold,1,1/0],
+  var map={atk:[game.shAtk,1,1/0],def:[game.shDef,1,1/0],gold:[game.shGold,1,1/0],
     spd:[game.shSpd,2,59],respawn:[game.shRespawn,3,59],crit_rate:[game.shCritRate,2,95],
     crit_dmg:[game.shCritDmg,2,1/0],bag:[game.shBag,1,1/0],autosell:[game.shAutoSell,3,10],
-    regen:[game.shRegen,2,1/0],traincost:[game.shTrainCost,4,10],
-    dropmax:[game.shDropMax,5,1/0],dropmin:[game.shDropMin,8,1/0]
-  };
+    regen:[game.shRegen,2,1/0],traincost:[game.shTrainCost,4,10],dropmax:[game.shDropMax,5,1/0],dropmin:[game.shDropMin,8,1/0]};
   if(type==="autoequip") return {ok:game.shAutoEquip<1,cost:50,n:1};
   var m=map[type]; if(!m) return null;
   var cur=m[0], mul=m[1], max=m[2], rem=max-cur;
   if(rem<=0) return {ok:false,cost:0,n:0};
-  var want=buyAmount==="max"?rem:Math.min(Number(buyAmount),rem);
-  var cost=0,n=0;
-  for(var i=1;i<=want;i++){
-    var nc=(cur+i)*mul;
-    if(cost+nc>game.crystal) break;
-    cost+=nc; n++;
-  }
+  var want=buyAmount==="max"?rem:Math.min(Number(buyAmount),rem), cost=0, n=0;
+  for(var i=1;i<=want;i++){ var nc=(cur+i)*mul; if(cost+nc>game.crystal) break; cost+=nc; n++; }
   return {ok:n>0,cost:cost,n:n};
 }
-
 window.buyShop=function(type){
-  if(type==="autoequip"){
-    if(game.shAutoEquip<1&&game.crystal>=50){ game.crystal-=50; game.shAutoEquip=1; updateUI(); saveGame(); }
-    return;
-  }
+  if(type==="autoequip"){ if(game.shAutoEquip<1&&game.crystal>=50){ game.crystal-=50; game.shAutoEquip=1; updateUI(); saveGame(); } return; }
   var info=shopInfo(type); if(!info||!info.ok) return;
   game.crystal-=info.cost;
   var keys={atk:"shAtk",def:"shDef",gold:"shGold",spd:"shSpd",respawn:"shRespawn",crit_rate:"shCritRate",crit_dmg:"shCritDmg",bag:"shBag",autosell:"shAutoSell",regen:"shRegen",traincost:"shTrainCost",dropmax:"shDropMax",dropmin:"shDropMin"};
@@ -827,33 +755,45 @@ window.buyShop=function(type){
   updateUI(); saveGame();
 };
 
-/* ===== 転生・ビルド（選択がリセットされない） ===== */
-window.openRebirthPanel=function(){
-  if(game.inInfinite) return;
-  var pending=calculateCrystals();
-  if(pending<=0){ addLog("転生できる結晶がありません"); return; }
-  if(!rebirthPanelKeepBuild) game.pendingBuild=game.build||"none";
-  rebirthPanelKeepBuild=false;
-  $("rebirth-panel").style.display="block";
-  S("rebirth-pending", pending);
-  S("rebirth-next-mult", (1+Math.log((game.rebirths||0)+2)).toFixed(2));
+/* ===== 転生UI（中央モーダル + クリック選択確実） ===== */
+function renderBuildList(){
+  var box=$("build-list"); if(!box) return;
+  if(!game.pendingBuild) game.pendingBuild=game.build||"none";
   var html="";
   Object.keys(BUILDS).forEach(function(k){
     var b=BUILDS[k];
-    html+='<div class="build-card'+(game.pendingBuild===k?' selected':'')+'" data-build="'+k+'"><h5>'+b.name+'</h5>'+b.desc+'</div>';
+    var sel=game.pendingBuild===k?" selected":"";
+    html+='<div class="build-card'+sel+'" data-build="'+k+'">'+
+      "<h5>"+b.name+(game.pendingBuild===k?" ✓":"")+"</h5>"+
+      "<p>"+b.desc+"</p></div>";
   });
-  $("build-list").innerHTML=html;
-  $("build-list").onclick=function(ev){
-    var card=ev.target.closest(".build-card");
-    if(!card) return;
-    game.pendingBuild=card.getAttribute("data-build");
-    rebirthPanelKeepBuild=true;
-    window.openRebirthPanel();
-  };
+  box.innerHTML=html;
+}
+
+window.openRebirthPanel=function(){
+  if(game.inInfinite){ addLog("無限回廊中は転生できません"); return; }
+  if(!isRebirthUnlocked()){ addLog("エリア3を踏破すると転生が解放されます"); return; }
+  var pending=calculateCrystals();
+  if(pending<=0){ addLog("獲得できる結晶がありません（もう少し進めましょう）"); return; }
+  game.pendingBuild=game.build||"none";
+  S("rebirth-pending", pending);
+  S("rebirth-next-mult", (1+Math.log((game.rebirths||0)+2)).toFixed(2));
+  renderBuildList();
+  $("rebirth-overlay").classList.add("show");
 };
-window.closeRebirthPanel=function(){ $("rebirth-panel").style.display="none"; rebirthPanelKeepBuild=false; };
+
+window.closeRebirthPanel=function(){
+  $("rebirth-overlay").classList.remove("show");
+};
+
+window.selectBuild=function(k){
+  if(!BUILDS[k]) return;
+  game.pendingBuild=k;
+  renderBuildList();
+};
+
 window.confirmRebirth=function(){
-  if(game.inInfinite) return;
+  if(game.inInfinite||!isRebirthUnlocked()) return;
   var earned=calculateCrystals();
   if(earned<=0) return;
   clearTimeout(respawnTimeout); isRespawning=false;
@@ -864,15 +804,25 @@ window.confirmRebirth=function(){
   game.currentStageId=1; game.stageMinor=1; game.stageFloors={};
   game.playerHp=getMaxHp();
   rollEnemy();
-  $("rebirth-panel").style.display="none";
-  rebirthPanelKeepBuild=false;
+  window.closeRebirthPanel();
   $("log").innerHTML="";
-  addLog("🔄 転生 +"+earned+"💎 / "+BUILDS[game.build].name+" / ×"+getMult().toFixed(2));
+  addLog("🔄 転生 +"+earned+"💎 / ビルド: "+BUILDS[game.build].name+" / ×"+getMult().toFixed(2));
   checkAchievements();
   startTimers(); startRegen(); updateUI(); saveGame();
 };
 
-/* ===== ステージ ===== */
+/* ビルドカードクリック（イベント委譲・確実に動く） */
+document.addEventListener("click", function(ev){
+  var card=ev.target.closest(".build-card");
+  if(!card) return;
+  var k=card.getAttribute("data-build");
+  if(k) window.selectBuild(k);
+});
+/* オーバーレイ背景クリックで閉じる */
+$("rebirth-overlay").addEventListener("click", function(ev){
+  if(ev.target.id==="rebirth-overlay") window.closeRebirthPanel();
+});
+
 window.changeStage=function(id){
   if(game.inInfinite) return;
   clearTimeout(respawnTimeout); isRespawning=false;
@@ -904,15 +854,12 @@ window.leaveInfinite=function(){
   startTimers(); updateUI(); saveGame();
 };
 
-/* ===== 装備UI ===== */
 window.equipWeapon=function(i){
   if(i<0||i>=game.weaponsBag.length) return;
   var old={name:game.wName,plus:game.wPlus,stat:game.wAtk,value:Math.floor(game.wAtk*5),effect:game.wEffect};
   var n=game.weaponsBag[i];
   game.wName=n.name; game.wPlus=n.plus; game.wAtk=n.stat; game.wEffect=n.effect||null;
-  game.weaponsBag.splice(i,1);
-  if(old.stat>0) pushItem("w",old);
-  updateUI(); saveGame();
+  game.weaponsBag.splice(i,1); if(old.stat>0) pushItem("w",old); updateUI(); saveGame();
 };
 window.sellWeapon=function(i){ if(i<0||i>=game.weaponsBag.length)return; game.gold+=game.weaponsBag[i].value; game.weaponsBag.splice(i,1); updateUI(); saveGame(); };
 window.equipArmor=function(i){
@@ -920,9 +867,7 @@ window.equipArmor=function(i){
   var old={name:game.aName,plus:game.aPlus,stat:game.aDef,value:Math.floor(game.aDef*10),effect:game.aEffect};
   var n=game.armorsBag[i];
   game.aName=n.name; game.aPlus=n.plus; game.aDef=n.stat; game.aEffect=n.effect||null;
-  game.armorsBag.splice(i,1);
-  if(old.stat>0) pushItem("a",old);
-  updateUI(); saveGame();
+  game.armorsBag.splice(i,1); if(old.stat>0) pushItem("a",old); updateUI(); saveGame();
 };
 window.sellArmor=function(i){ if(i<0||i>=game.armorsBag.length)return; game.gold+=game.armorsBag[i].value; game.armorsBag.splice(i,1); updateUI(); saveGame(); };
 window.equipAccessory=function(i){
@@ -930,10 +875,8 @@ window.equipAccessory=function(i){
   var old={name:game.cName,plus:game.cPlus,hp:game.cHp,regen:game.cRegen,value:Math.floor((game.cHp+game.cRegen*5)*3),effect:game.cEffect};
   var n=game.accessoriesBag[i];
   game.cName=n.name; game.cPlus=n.plus; game.cHp=n.hp; game.cRegen=n.regen; game.cEffect=n.effect||null;
-  game.accessoriesBag.splice(i,1);
-  if(old.hp>0||old.regen>0) pushItem("c",old);
-  game.playerHp=Math.min(game.playerHp,getMaxHp());
-  updateUI(); saveGame();
+  game.accessoriesBag.splice(i,1); if(old.hp>0||old.regen>0) pushItem("c",old);
+  game.playerHp=Math.min(game.playerHp,getMaxHp()); updateUI(); saveGame();
 };
 window.sellAccessory=function(i){ if(i<0||i>=game.accessoriesBag.length)return; game.gold+=game.accessoriesBag[i].value; game.accessoriesBag.splice(i,1); updateUI(); saveGame(); };
 window.equipBestAll=function(){
@@ -950,17 +893,15 @@ window.sellAllInventory=function(){
   game.weaponsBag.forEach(function(i){g+=i.value});
   game.armorsBag.forEach(function(i){g+=i.value});
   game.accessoriesBag.forEach(function(i){g+=i.value});
-  game.gold+=g; game.weaponsBag=[]; game.armorsBag=[]; game.accessoriesBag=[];
-  updateUI(); saveGame();
+  game.gold+=g; game.weaponsBag=[]; game.armorsBag=[]; game.accessoriesBag=[]; updateUI(); saveGame();
 };
-
 window.toggleArtSummary=function(){
   artSummaryOpen=!artSummaryOpen;
   var el=$("art-summary"); if(!el) return;
   if(!artSummaryOpen){ el.style.display="none"; return; }
   el.style.display="block";
   function p(v){return (v*100).toFixed(1)+"%"}
-  el.innerHTML="攻撃+"+p(getArtBonus("atk"))+" 防御+"+p(getArtBonus("def"))+" G+"+p(getArtBonus("gold"))+"<br>回復+"+p(getArtBonus("regen_val"))+" 結晶+"+p(getArtBonus("crystal_up"));
+  el.innerHTML="攻撃+"+p(getArtBonus("atk"))+" 防御+"+p(getArtBonus("def"))+" G+"+p(getArtBonus("gold"))+" 結晶+"+p(getArtBonus("crystal_up"));
 };
 
 function renderStages(){
@@ -1017,11 +958,10 @@ window.importSave=function(ev){
   var r=new FileReader();
   r.onload=function(e){
     try{
-      if(!confirm("上書きしますか？")) return;
+      if(!confirm("上書き？")) return;
       clearTimeout(respawnTimeout); isRespawning=false;
       game=Object.assign(clone(defaultData), JSON.parse(e.target.result));
       sanitize(); saveGame(); rollEnemy(); startTimers(); startRegen(); updateUI();
-      addLog("📥 インポート");
     }catch(err){ alert("失敗"); }
   };
   r.readAsText(f); ev.target.value="";
@@ -1034,6 +974,28 @@ window.resetGame=function(){
   $("log").innerHTML=""; addLog("クリア");
   rollEnemy(); startTimers(); startRegen(); updateUI();
 };
+
+function updateRebirthButton(){
+  var btn=$("btn-rebirth"); if(!btn) return;
+  if(game.inInfinite){
+    btn.disabled=true;
+    btn.innerText="無限回廊中は不可";
+    return;
+  }
+  if(!isRebirthUnlocked()){
+    btn.disabled=true;
+    btn.innerText="エリア3踏破で解放";
+    return;
+  }
+  var pending=calculateCrystals();
+  if(pending<=0){
+    btn.disabled=true;
+    btn.innerText="転生可能（結晶0・進行不足）";
+    return;
+  }
+  btn.disabled=false;
+  btn.innerText="次元転生 (+"+pending+"💎)";
+}
 
 function updateUI(){
   var power=getTotalPower();
@@ -1054,7 +1016,6 @@ function updateUI(){
   S("rebirth-count", game.rebirths);
   S("buff-mult", getMult().toFixed(2));
   S("build-name", (BUILDS[game.build]||BUILDS.none).name);
-
   S("player-hp", Math.floor(game.playerHp));
   S("player-max-hp", getMaxHp());
   var pb=$("player-hp-bar"); if(pb) pb.style.width=Math.max(0,game.playerHp/getMaxHp()*100)+"%";
@@ -1076,8 +1037,7 @@ function updateUI(){
 
   function setEff(id,eff){
     var e=$(id); if(!e) return;
-    if(eff){ e.style.display="inline-block"; e.innerText=effectLabel(eff); }
-    else e.style.display="none";
+    if(eff){ e.style.display="inline-block"; e.innerText=effectLabel(eff); } else e.style.display="none";
   }
   if(game.wAtk>0){ S("w-name", game.wName+" +"+game.wPlus); S("w-atk","(+ "+game.wAtk+")"); }
   else{ S("w-name","なし"); S("w-atk",""); }
@@ -1088,7 +1048,6 @@ function updateUI(){
   setEff("w-eff", game.wEffect); setEff("a-eff", game.aEffect); setEff("c-eff", game.cEffect);
 
   S("lv-atk", game.lvAtk); S("lv-hp", game.lvHp); S("lv-def", game.lvDef); S("lv-regen", game.lvRegen);
-
   function trainPrice(type,id){
     var lv=game[{atk:"lvAtk",hp:"lvHp",def:"lvDef",regen:"lvRegen"}[type]];
     var limit=buyAmount==="max"?99999:Number(buyAmount), total=0, n=0;
@@ -1114,7 +1073,6 @@ function updateUI(){
   S("shop-autoequip-val", game.shAutoEquip?"ON":"OFF");
   S("shop-regen-lv",game.shRegen); S("shop-traincost-lv",game.shTrainCost);
   S("shop-dropmax-val", getDropMaxPlus()); S("shop-dropmin-val", getDropMinPlus());
-
   [["btn-sh-spd",game.shSpd>=59],["btn-sh-respawn",game.shRespawn>=59],["btn-sh-crit-rate",game.shCritRate>=95],
    ["btn-sh-autosell",game.shAutoSell>=10],["btn-sh-autoequip",game.shAutoEquip>=1],["btn-sh-traincost",game.shTrainCost>=10]
   ].forEach(function(x){ var e=$(x[0]); if(e) e.disabled=x[1]; });
@@ -1123,18 +1081,16 @@ function updateUI(){
   if(game.build==="tank") frames=Math.floor(frames*2);
   S("speed-indicator", frames<=1?"最速":(60/frames).toFixed(1)+"/s");
 
-  var pending=calculateCrystals();
-  S("pending-crystals", pending);
+  var pending=isRebirthUnlocked()?calculateCrystals():0;
   S("pending-crystals-shop", pending);
-  var br=$("btn-rebirth"); if(br) br.disabled=pending<=0||game.inInfinite;
+  updateRebirthButton();
 
   renderStages(); renderArts(); renderInv(); updateBuyBtns();
   $("btn-leave-infinite").style.display=game.inInfinite?"block":"none";
 }
 
-/* boot */
 loadGame();
-addLog("⚔ 起動完了 — 演出・ビルド・実績・特殊効果ON");
+addLog("⚔ 起動 — 転生はエリア3踏破で解放");
 rollEnemy();
 startTimers();
 startRegen();
