@@ -122,7 +122,7 @@
         <div id="inv-armors" style="font-size: 13px; margin-bottom: 10px;">なし</div>
     </div>
 
-    <!-- 🏆 宝物タブ (新規追加) -->
+    <!-- 🏆 宝物タブ -->
     <div id="tab-artifact" class="tab-content">
         <h4>🏆 宝物一覧 (エネミーから確率ドロップ)</h4>
         <div id="artifact-list" style="font-size: 13px; color: #ffca28; line-height: 1.6;">未所持</div>
@@ -306,15 +306,22 @@ function getCritRate() { return 5 + game.shCritRate * 1; }
 function getCritDmgMultiplier() { return 1.5 + game.shCritDmg * 0.1 + getArtBonus("crit_dmg"); }
 function getBagMax() { return 10 + game.shBag * 5; }
 function getAutoSellBonus() { return 1.0 + game.shAutoSell * 0.2; }
-function getActiveStage() { return STAGES.find(function(s) { return s.id === game.currentStageId; }) || STAGES; }
+function getActiveStage() {
+var found = STAGES.find(function(s) { return s.id === game.currentStageId; });
+return found ? found : STAGES[0];
+}
 function getE_MaxHp() {
 var activeSt = getActiveStage();
-var b = 50 * activeSt.multiplier;
+var b = 50 * (activeSt ? activeSt.multiplier : 1);
 return game.stageMinor === 100 ? (b * 4.0) : b;
 }
-function getE_Atk() { return Math.floor(5 * getActiveStage().multiplier); }
+function getE_Atk() {
+var activeSt = getActiveStage();
+return Math.floor(5 * (activeSt ? activeSt.multiplier : 1));
+}
 function getE_Gold() {
-var b = 20 * getActiveStage().multiplier;
+var activeSt = getActiveStage();
+var b = 20 * (activeSt ? activeSt.multiplier : 1);
 return Math.floor(b * (1 + game.shGold * 0.25) * (1 + getArtBonus("gold")));
 }
 function calculateCrystals() {
@@ -440,6 +447,7 @@ if (type === 'w') game.weaponsBag.push(obj);
 else game.armorsBag.push(obj);
 }
 }
+// 🛠 修正箇所: 配列の先頭インデックス[0]を正確に指定し、プロパティエラーを完全に防止
 window.equipBestAll = function() {
 if (game.weaponsBag.length > 0) {
 game.weaponsBag.sort(function(a,b){return b.stat-a.stat;});
@@ -486,6 +494,7 @@ return;
 pushOrSellItem(type, name, statVal, val);
 }
 function playerAttackLoop() {
+try {
 if (checkPlayerDeath()) return;
 var base = getAtk();
 var dmg = base;
@@ -513,6 +522,7 @@ game.playerHp = getMaxHp();
 }
 updateUI();
 saveGame();
+} catch(e) { console.error("AttackLoop Error: ", e); }
 }
 function enemyAttackLoop() {
 if (game.playerHp <= 0 || game.enemyHp <= 0) return;
@@ -606,7 +616,7 @@ safeSetText("player-max-hp", getMaxHp());
 var pBar = document.getElementById("player-hp-bar"); if(pBar) pBar.style.width = Math.max(0, (game.playerHp / getMaxHp()) * 100) + "%";
 var eBar = document.getElementById("enemy-hp-bar"); if(eBar) eBar.style.width = Math.max(0, (game.enemyHp / getE_MaxHp()) * 100) + "%";
 var activeSt = getActiveStage();
-safeSetText("stage-display-full", activeSt.name + " (" + game.stageMinor + "階)");
+safeSetText("stage-display-full", (activeSt ? activeSt.name : "下水道の巣窟") + " (" + game.stageMinor + "階)");
 var elementEnemyName = document.getElementById("enemy-name");
 if(elementEnemyName) {
 if (game.stageMinor === 100) {
