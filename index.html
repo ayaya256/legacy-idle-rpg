@@ -5,35 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Legacy Idle RPG - Pure Auto Edition</title>
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #1a1a1a; color: #fff; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: #2a2a2a; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        h1, h3, h4 { color: #ffd700; margin-top: 0; }
-        .status-box, .log-box, .tab-content { background: #111; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #444; }
-        .log-box { height: 150px; overflow-y: auto; font-size: 13px; color: #bbb; font-family: monospace; }
-        .hp-bar-bg { background: #444; width: 100%; height: 18px; border-radius: 9px; overflow: hidden; margin: 5px 0 10px 0; }
+        body { font-family: sans-serif; background-color: #121212; color: #e0e0e0; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 500px; background: #1e1e1e; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.6); box-sizing: border-box; }
+        h2, h3, h4 { margin-top: 0; margin-bottom: 10px; color: #ffd700; text-align: center; }
+        h4 { text-align: left; border-left: 4px solid #ffd700; padding-left: 8px; color: #fff; margin-top: 15px; }
+        .status-box, .log-box, .tab-content { background: #151515; padding: 12px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #333; }
+        .log-box { height: 120px; overflow-y: auto; font-size: 12px; color: #aaa; font-family: monospace; line-height: 1.4; }
+        .hp-bar-bg { background: #333; width: 100%; height: 16px; border-radius: 8px; overflow: hidden; margin: 4px 0 10px 0; border: 1px solid #444; }
         .hp-bar { height: 100%; width: 100%; transition: width 0.1s; }
-        #player-hp-bar { background: #4caf50; }
-        #enemy-hp-bar { background: #f44336; }
-        .tabs { display: flex; gap: 5px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; background: #333; color: #fff; border: 1px solid #555; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        #player-hp-bar { background: #2e7d32; }
+        #enemy-hp-bar { background: #c62828; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+        .tab-btn { flex: 1; padding: 8px 2px; background: #2a2a2a; color: #ccc; border: 1px solid #444; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 12px; }
         .tab-btn.active { background: #ffd700; color: #000; border-color: #ffd700; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        button { background: #ffd700; color: #000; border: none; padding: 8px 12px; font-weight: bold; cursor: pointer; border-radius: 4px; margin: 4px 2px; }
-        button:disabled { background: #555; color: #aaa; cursor: not-allowed; }
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .item-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding: 6px 0; }
+        button { background: #ffd700; color: #000; border: none; padding: 6px 10px; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 12px; }
+        button:disabled { background: #444; color: #777; cursor: not-allowed; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 13px; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #252525; padding: 6px 0; font-size: 13px; }
+        .btn-danger { background: #c62828; color: #fff; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Legacy Idle RPG</h1>
+    <h2>Legacy Idle RPG</h2>
     
     <!-- 📊 総合能力値 -->
     <div class="status-box">
         <h3>📊 総合能力値</h3>
-        <div class="grid">
+        <div class="grid-2">
             <div>💰 所持金: <span id="gold">0</span> G</div>
             <div>🏛 残りの借金: <span id="debt">1,000,000,000</span> G</div>
             <div>💎 魂の結晶: <span id="crystal">0</span> 個</div>
@@ -45,22 +47,22 @@
             <div>💚 自動回復: <span id="total-regen">2</span></div>
             <div>⏳ 回復速度: <span id="regen-speed">1.00</span> s</div>
         </div>
-        <div style="margin-top: 15px; text-align: center;">
+        <div style="margin-top: 12px; display: flex; justify-content: center; gap: 8px;">
             <button onclick="window.repayDebt()">🏛 1,000G返済する</button>
-            <button id="btn-rebirth" onclick="window.executeRebirth()">⏳ 次元転生ゲート作動 (+<span id="pending-crystals">0</span>💎)</button>
+            <button id="btn-rebirth" onclick="window.executeRebirth()">次元転生ゲート作動 (+<span id="pending-crystals">0</span>💎)</button>
         </div>
     </div>
 
     <!-- ⚔ 戦闘画面 -->
     <div class="status-box">
         <h3 id="stage-display-full">下水道の巣窟 (1階)</h3>
-        <div>⚔ 完全オート戦闘中... (<span id="speed-indicator">秒間1.0回</span>)</div>
+        <div style="font-size: 13px; text-align: center; margin-bottom: 8px;">⚔ 完全オート戦闘中... (<span id="speed-indicator">秒間1.0回</span>)</div>
         
-        <div style="margin-top: 10px;">
+        <div style="font-size: 13px;">
             🛡 プレイヤー: <span id="player-hp">150</span> / <span id="player-max-hp">150</span> HP
             <div class="hp-bar-bg"><div id="player-hp-bar" class="hp-bar"></div></div>
         </div>
-        <div>
+        <div style="font-size: 13px;">
             😈 <span id="enemy-name">ハウンド(階層兵)</span>: <span id="enemy-hp">50</span> / <span id="enemy-max-hp">50</span> HP
             <div class="hp-bar-bg"><div id="enemy-hp-bar" class="hp-bar"></div></div>
         </div>
@@ -69,11 +71,12 @@
     <!-- 📜 ログ -->
     <div id="log" class="log-box"></div>
 
-    <!-- 📑 タブ切り替え -->
+    <!-- 📑 タブ -->
     <div class="tabs">
         <button class="tab-btn active" id="tab-btn-train" onclick="window.switchTab('train')">💪 育成</button>
-        <button class="tab-btn" id="tab-btn-bag" onclick="window.switchTab('bag')">🎒 バッグ (<span id="bag-usage">0</span>/<span id="bag-max">10</span>)</button>
-        <button class="tab-btn" id="tab-btn-shop" onclick="window.switchTab('shop')">💎 特権</button>
+        <button class="tab-btn" id="tab-btn-bag" onclick="window.switchTab('bag')">🎒 バッグ (<span id="bag-usage">0</span>/10)</button>
+        <button class="tab-btn" id="tab-btn-artifact" onclick="window.switchTab('artifact')">🏆 宝物</button>
+        <button class="tab-btn" id="tab-btn-shop" onclick="window.switchTab('shop')">💪 特権</button>
         <button class="tab-btn" id="tab-btn-stage" onclick="window.switchTab('stage')">🗺 ステージ</button>
     </div>
 
@@ -97,29 +100,37 @@
             <button onclick="window.train('regen')">200G / 訓練</button>
         </div>
         
-        <h4 style="margin-top:15px;">🛡 現在の武具</h4>
-        <div>⚔ 武器: <span id="w-name">なし</span> <span id="w-atk" style="color:#ff4500;"></span></div>
-        <div style="margin-bottom: 10px;">🛡 防具: <span id="a-name">なし</span> <span id="a-def" style="color:#1e90ff;"></span></div>
+        <h4>🛡 現在の武具</h4>
+        <div style="font-size: 13px; margin-bottom: 8px;">
+            <div>⚔ 武器: <span id="w-name">なし</span> <span id="w-atk" style="color:#ff8c00;"></span></div>
+            <div>🛡 防具: <span id="a-name">なし</span> <span id="a-def" style="color:#42a5f5;"></span></div>
+        </div>
         <button onclick="window.equipBestAll()">⚡ 最強武具を一括装備</button>
     </div>
 
     <!-- 🎒 バッグタブ -->
     <div id="tab-bag" class="tab-content">
-        <h4>🎒 バッグ容量: <span id="bag-usage-tab">0</span> / <span id="bag-max-view">10</span></h4>
-        <button onclick="window.sellAllInventory()" style="background:#f44336; color:#fff;">容量解放: 全て売却</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 14px; font-weight: bold;">🎒 容量: <span id="bag-usage-tab">0</span> / <span id="bag-max">10</span></span>
+            <button class="btn-danger" onclick="window.sellAllInventory()">全て売却</button>
+        </div>
         
-        <h5>⚔ 武器一覧</h5>
-        <div id="inv-weapons">なし</div>
+        <h4>⚔ 武器一覧</h4>
+        <div id="inv-weapons" style="font-size: 13px; margin-bottom: 10px;">なし</div>
         
-        <h5>🛡 防具一覧</h5>
-        <div id="inv-armors">なし</div>
-        
-        <h5>🏆 獲得した宝物（自動効果）</h5>
-        <div id="artifact-list">未所持 (エネミーから確率ドロップ)</div>
+        <h4>🛡 防具一覧</h4>
+        <div id="inv-armors" style="font-size: 13px; margin-bottom: 10px;">なし</div>
+    </div>
+
+    <!-- 🏆 宝物タブ (新規追加) -->
+    <div id="tab-artifact" class="tab-content">
+        <h4>🏆 宝物一覧 (エネミーから確率ドロップ)</h4>
+        <div id="artifact-list" style="font-size: 13px; color: #ffca28; line-height: 1.6;">未所持</div>
     </div>
 
     <!-- 💎 永続特権タブ -->
     <div id="tab-shop" class="tab-content">
+        <h3>転生時獲得予定の結晶: <span id="pending-crystals-shop">0</span> 個</h3>
         <h4>💎 永続特権（リセットなし）</h4>
         <div class="item-row">
             <div>魂 of 練気 (ATK+20% / Lv: <span id="shop-atk-lv">0</span>)</div>
@@ -161,30 +172,24 @@
             <div>精霊の加護 (回復量+20% / Lv: <span id="shop-regen-lv">0</span>)</div>
             <button onclick="window.buyShop('regen')"><span id="price-sh-regen">2</span> 💎</button>
         </div>
-        <div style="margin-top: 20px; text-align: center;">
-            <button onclick="window.resetGame()" style="background:#d32f2f; color:#fff; font-size:11px;">⚠ セーブデータ強制初期化リセット</button>
+        <div style="margin-top: 15px; text-align: center;">
+            <button class="btn-danger" onclick="window.resetGame()" style="font-size:11px; padding: 4px 8px;">⚠ セーブデータ強制初期化リセット</button>
         </div>
     </div>
 
     <!-- 🗺 ステージ選択タブ -->
     <div id="tab-stage" class="tab-content">
         <h4>🗺 ステージ選択</h4>
-        <div id="stage-selector" class="grid"></div>
-    </div>
-</div>
-
-<!-- 🧠 ゲームロジック (JavaScript) -->
-<script>
 var STAGES = [
-  { id: 1, name: "下水道の巣窟", multiplier: 1, art: "汚れた下水管", desc: "ゴールド獲得量 +15%", type: "gold" },
-  { id: 2, name: "路地裏の闇賭場", multiplier: 5, art: "イカサマのダイス", desc: "総攻撃力 +15%", type: "atk" },
-  { id: 3, name: "ジャンク鉄鋼山", multiplier: 25, art: "錆びた歯車", desc: "総防御力 +15%", type: "def" },
-  { id: 4, name: "強欲ゴブリン村", multiplier: 125, art: "黄金の入歯", desc: "ゴールド獲得量 +15%", type: "gold" },
-  { id: 5, name: "裏社会の闇ギルド", multiplier: 625, art: "黒の契約書", desc: "クリティカルダメージ倍率 +20%", type: "crit_dmg" },
-  { id: 6, name: "不夜城の魔塔", multiplier: 3125, art: "吸血鬼の牙", desc: "自動回復量 +25%", type: "regen_val" },
-  { id: 7, name: "亡者の眠る底石", multiplier: 15625, art: "静寂のドクロ", desc: "回復スピード 5%短縮", type: "regen_spd" },
-  { id: 8, name: "深淵の古戦場", multiplier: 78125, art: "折れた覇王の剣", desc: "総攻撃力 +25%", type: "atk" },
-  { id: 9, name: "邪神のマモン宮殿", multiplier: 390625, art: "無限の財布", desc: "転生時の獲得結晶 +20%", type: "crystal_up" },
+{ id: 1, name: "下水道の巣窟", multiplier: 1, art: "汚れた下水管", desc: "ゴールド獲得量 +15%", type: "gold" },
+{ id: 2, name: "路地裏の闇賭場", multiplier: 5, art: "イカサマのダイス", desc: "総攻撃力 +15%", type: "atk" },
+{ id: 3, name: "ジャンク鉄鋼山", multiplier: 25, art: "錆びた歯車", desc: "総防御力 +15%", type: "def" },
+{ id: 4, name: "強欲ゴブリン村", multiplier: 125, art: "黄金の入歯", desc: "ゴールド獲得量 +15%", type: "gold" },
+{ id: 5, name: "裏社会の闇ギルド", multiplier: 625, art: "黒の契約書", desc: "クリティカルダメージ倍率 +20%", type: "crit_dmg" },
+{ id: 6, name: "不夜城の魔塔", multiplier: 3125, art: "吸血鬼の牙", desc: "自動回復量 +25%", type: "regen_val" },
+{ id: 7, name: "亡者の眠る底石", multiplier: 15625, art: "静寂のドクロ", desc: "回復スピード 5%短縮", type: "regen_spd" },
+{ id: 8, name: "深淵の古戦場", multiplier: 78125, art: "折れた覇王の剣", desc: "総攻撃力 +25%", type: "atk" },
+{ id: 9, name: "邪神のマモン宮殿", multiplier: 390625, art: "無限の財布", desc: "転生時の獲得結晶 +20%", type: "crystal_up" },
 { id: 10, name: "債務終焉の地", multiplier: 1953125, art: "白紙の契約書", desc: "全能力(ATK/DEF/REGEN) +15%", type: "all_up" }
 ];
 var defaultData = {
@@ -301,7 +306,7 @@ function getCritRate() { return 5 + game.shCritRate * 1; }
 function getCritDmgMultiplier() { return 1.5 + game.shCritDmg * 0.1 + getArtBonus("crit_dmg"); }
 function getBagMax() { return 10 + game.shBag * 5; }
 function getAutoSellBonus() { return 1.0 + game.shAutoSell * 0.2; }
-function getActiveStage() { return STAGES.find(function(s) { return s.id === game.currentStageId; }) || STAGES[0]; }
+function getActiveStage() { return STAGES.find(function(s) { return s.id === game.currentStageId; }) || STAGES; }
 function getE_MaxHp() {
 var activeSt = getActiveStage();
 var b = 50 * activeSt.multiplier;
@@ -366,9 +371,13 @@ if(!box) return;
 var html = "";
 STAGES.forEach(function(st) {
 var count = game.artifacts[st.id] || 0;
-if(count > 0) html += '🏆 ' + st.art + ' x' + count + ' (' + st.desc + ')';
+if(count > 0) {
+html += '🏆 ' + st.art + ' x' + count + '
+└ 効果: ' + st.desc + '';
+}
 });
-box.innerHTML = html || "未所持 (エネミーから確率ドロップ)";
+box.innerHTML = html || '未所持
+ステージボス(100階層)などから確率でドロップします';
 }
 function renderInventory() {
 var wBox = document.getElementById("inv-weapons");
@@ -391,7 +400,6 @@ var totalItems = game.weaponsBag.length + game.armorsBag.length;
 if(document.getElementById("bag-usage")) document.getElementById("bag-usage").innerText = totalItems;
 if(document.getElementById("bag-usage-tab")) document.getElementById("bag-usage-tab").innerText = totalItems;
 if(document.getElementById("bag-max")) document.getElementById("bag-max").innerText = getBagMax();
-if(document.getElementById("bag-max-view")) document.getElementById("bag-max-view").innerText = getBagMax();
 }
 window.equipWeapon = function(index) {
 if (index < 0 || index >= game.weaponsBag.length) return;
@@ -637,6 +645,7 @@ var speedDisplay = document.getElementById("speed-indicator");
 if(speedDisplay) speedDisplay.innerText = frames === 1 ? "⚡最速1F" : "秒間" + parseFloat(60/frames).toFixed(1) + "回";
 var pending = calculateCrystals();
 safeSetText("pending-crystals", pending);
+safeSetText("pending-crystals-shop", pending);
 var btnRebirth = document.getElementById("btn-rebirth"); if(btnRebirth) btnRebirth.disabled = (pending <= 0);
 renderStageButtons(); renderArtifacts(); renderInventory();
 }
