@@ -355,7 +355,10 @@ function getArtBonus(type) {
     return bonus;
 }
 
-function getMult() { return Math.pow(1.5, game.rebirths); }
+function getMult() {
+    // 最大 +1000%（×11.0）で打ち止め
+    return Math.min(11, Math.pow(1.5, game.rebirths));
+}
 
 function getMaxHp() { return Math.floor((150 + game.lvHp * 30) * getMult()); }
 
@@ -430,30 +433,25 @@ function getAttackInterval() {
     return Math.max(1, frames) * Math.floor(1000 / 60);
 }
 
-// ===== 総合力計算（初期状態：装備なし・通常訓練なし） =====
+// ===== 総合力計算（装備・訓練・すべて反映） =====
 function getTotalPower() {
-    var mult = getMult();
-    
-    // 装備・通常訓練を無視した基礎値
-    var cleanAtk = Math.floor((10) * mult * (1 + game.shAtk * 0.2) * (1 + getArtBonus("atk")));
-    var cleanDef = Math.floor((0) * mult * (1 + game.shDef * 0.2) * (1 + getArtBonus("def")));
-    var cleanHp  = Math.floor(150 * mult);
-    var cleanRegen = Math.floor(2 * (1 + game.shRegen * 0.2) * (1 + getArtBonus("regen_val"))); // lvRegen=1基準
-    
+    var atk = getAtk();
+    var def = getDef();
+    var hp  = getMaxHp();
+    var regen = getRegenVal();
     var critRate = getCritRate() / 100;
     var critDmg = getCritDmgMultiplier();
-    var atkSpeed = 1000 / getAttackInterval(); // 回/秒
+    var atkSpeed = 1000 / getAttackInterval();
     
-    // 総合力計算式（バランス調整済み）
     var power = 0;
-    power += cleanAtk * 10;                            // 攻撃力
-    power += cleanDef * 15;                            // 防御力
-    power += cleanHp * 0.5;                            // HP
-    power += cleanAtk * critRate * (critDmg - 1) * 20; // クリティカル貢献
-    power += cleanRegen * 8;                           // 回復力
-    power += atkSpeed * 80;                            // 攻撃速度
-    power += game.shBag * 30;                         // バッグ拡張の価値
-    power += (getDropMaxPlus() / 100) * 5;             // ドロップ上限の価値
+    power += atk * 10;                                    // 攻撃力
+    power += def * 15;                                    // 防御力
+    power += hp * 0.5;                                    // HP
+    power += atk * critRate * (critDmg - 1) * 20;         // クリティカル貢献
+    power += regen * 8;                                   // 回復力
+    power += atkSpeed * 80;                               // 攻撃速度
+    power += game.shBag * 30;                            // バッグ拡張
+    power += (getDropMaxPlus() / 100) * 5;                // ドロップ上限
     
     return Math.floor(power);
 }
@@ -829,16 +827,33 @@ window.resetGame = function() {
 
 window.executeRebirth = function() {
     var earned = calculateCrystals();
-    game.crystal += earned; game.rebirths++;
-    game.gold = 0; game.lvAtk = 0; game.lvHp = 0; game.lvDef = 0; game.lvRegen = 1;
-    game.currentStageId = 1; game.maxUnlockedStageId = 1; game.stageMinor = 1;
-    game.wAtk = 0; game.wName = "なし"; game.wPlus = 0;
-    game.aDef = 0; game.aName = "なし"; game.aPlus = 0;
-    game.playerHp = getMaxHp(); game.enemyHp = getE_MaxHp();
-    game.weaponsBag = []; game.armorsBag = [];
-    var l = document.getElementById("log"); if (l) l.innerHTML = "";
+    game.crystal += earned;
+    game.rebirths++;
+
+    // リセットするもの（装備・バッグは残す）
+    game.gold = 0;
+    game.lvAtk = 0;
+    game.lvHp = 0;
+    game.lvDef = 0;
+    game.lvRegen = 1;
+    game.currentStageId = 1;
+    game.maxUnlockedStageId = 1;
+    game.stageMinor = 1;
+    game.playerHp = getMaxHp();
+    game.enemyHp = getE_MaxHp();
+
+    var l = document.getElementById("log");
+    if (l) l.innerHTML = "";
     addLog("🔄 次元転生を行いました。結晶+" + earned + "個獲得！");
-    startTimers(); startRegenTimer(); updateUI(); saveGame();
+
+    if (getMult() >= 11) {
+        addLog("📢 転生倍率が上限（+1000%）に達しました。");
+    }
+
+    startTimers();
+    startRegenTimer();
+    updateUI();
+    saveGame();
 };
 
 // ===== セーブデータ エクスポート／インポート =====
@@ -883,7 +898,7 @@ window.importSave = function(event) {
 function updateUI() {
     var safeSetText = function(id, text) { var el = document.getElementById(id); if (el) el.innerText = text; };
     
-    // 総合力
+    // 総合力（装備含む）
     var power = getTotalPower();
     safeSetText("total-power", power.toLocaleString());
     if (power > game.bestPower) {
