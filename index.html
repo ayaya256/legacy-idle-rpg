@@ -3,221 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Legacy Idle RPG - Pure Auto Edition</title>
+<title>Legacy Idle RPG</title>
 <style>
 *{box-sizing:border-box}
-body{font-family:sans-serif;background:#121212;color:#e0e0e0;margin:0;padding:16px;display:flex;justify-content:center}
-.container{width:100%;max-width:540px;background:#1e1e1e;padding:14px;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,.6);position:relative}
-h2,h3,h4{margin:0 0 8px;color:#ffd700;text-align:center}
-h4{text-align:left;border-left:4px solid #ffd700;padding-left:8px;color:#fff;margin-top:12px}
-.status-box,.log-box,.tab-content{background:#151515;padding:12px;border-radius:6px;margin-bottom:10px;border:1px solid #333}
-.log-box{height:100px;overflow-y:auto;font-size:11px;color:#aaa;font-family:monospace;line-height:1.4}
-.hp-bar-bg{background:#333;width:100%;height:14px;border-radius:8px;overflow:hidden;margin:4px 0 8px;border:1px solid #444}
-.hp-bar{height:100%;width:100%;transition:width .08s}
-#player-hp-bar{background:#2e7d32}#enemy-hp-bar{background:#c62828}
-.tabs{display:flex;gap:3px;margin-bottom:10px;flex-wrap:wrap}
-.tab-btn{flex:1;min-width:46px;padding:7px 2px;background:#2a2a2a;color:#ccc;border:1px solid #444;cursor:pointer;border-radius:4px;font-weight:bold;font-size:11px}
-.tab-btn.active{background:#ffd700;color:#000}
-.tab-content{display:none}.tab-content.active{display:block}
-button{background:#ffd700;color:#000;border:none;padding:6px 10px;font-weight:bold;cursor:pointer;border-radius:4px;font-size:12px}
-button:disabled{background:#444;color:#777;cursor:not-allowed}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px}
-.item-row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #252525;padding:5px 0;font-size:12px;gap:4px}
-.btn-danger{background:#c62828;color:#fff}.btn-blue{background:#1976d2;color:#fff}
-.btn-purple{background:#7b1fa2;color:#fff}.btn-green{background:#2e7d32;color:#fff}
-#stage-selector{display:flex;flex-direction:column;gap:5px}
-#stage-selector button{text-align:left;padding:8px}
-#stage-selector button.active{background:#ffd700;color:#000}
-.buy-amount-btns{display:flex;gap:4px;margin-bottom:10px}
-.buy-amount-btns button{flex:1;padding:6px 0;font-size:11px;background:#333;color:#ccc}
-.buy-amount-btns button.active{background:#ffd700;color:#000}
-.power-display{text-align:center;font-size:15px;font-weight:bold;color:#ffd700;margin:6px 0;padding:8px;background:#222;border-radius:6px}
-.crystal-bar{text-align:center;font-size:14px;margin-bottom:8px;padding:8px;background:#1a1a2e;border-radius:6px;color:#ce93d8}
-.combat-wrap{position:relative;overflow:hidden}
-.float-layer{pointer-events:none;position:absolute;inset:0;z-index:20;overflow:hidden}
-.float-text{position:absolute;font-weight:900;font-size:16px;animation:floatUp .9s ease-out forwards;text-shadow:0 1px 3px #000,0 0 6px #000;white-space:nowrap}
-.float-text.dmg-p{color:#ff5252}.float-text.dmg-e{color:#fff}
-.float-text.crit{color:#ffeb3b;font-size:20px}.float-text.heal{color:#69f0ae}.float-text.gold{color:#ffd700;font-size:18px}
-@keyframes floatUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-55px)}}
-.ach-item{border-bottom:1px solid #333;padding:6px 0;font-size:12px}
-.ach-item.done{color:#ffd700}.ach-item .reward{color:#81c784;font-size:11px}
-.effect-tag{display:inline-block;background:#4a148c;color:#e1bee7;font-size:10px;padding:1px 5px;border-radius:3px;margin-left:3px}
-/* 転生モーダル（画面中央オーバーレイ） */
-.modal-overlay{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);
-  z-index:1000;align-items:center;justify-content:center;padding:16px;
-}
-.modal-overlay.show{display:flex}
-.modal-box{
-  width:100%;max-width:420px;max-height:90vh;overflow-y:auto;
-  background:#1a1a1a;border:2px solid #ffd700;border-radius:12px;padding:16px;
-  box-shadow:0 8px 32px rgba(0,0,0,.8);
-}
-.build-card{
-  border:2px solid #444;border-radius:8px;padding:10px 12px;margin-bottom:8px;
-  cursor:pointer;font-size:13px;background:#222;user-select:none;
-  transition:border-color .15s, background .15s;
-}
-.build-card:hover{border-color:#888}
-.build-card.selected{border-color:#ffd700;background:#3d3500}
-.build-card h5{margin:0 0 4px;color:#ffd700;font-size:14px;pointer-events:none}
-.build-card p{margin:0;color:#bbb;font-size:12px;pointer-events:none}
+body{font-family:sans-serif;background:#121212;color:#e0e0e0;margin:0;padding:12px;display:flex;justify-content:center}
+.container{width:100%;max-width:520px;background:#1e1e1e;padding:12px;border-radius:8px}
+h2,h3{margin:0 0 8px;color:#ffd700;text-align:center}
+h4{margin:12px 0 6px;color:#fff;border-left:3px solid #ffd700;padding-left:6px;font-size:14px}
+.box{background:#151515;border:1px solid #333;border-radius:6px;padding:10px;margin-bottom:10px}
+.log{height:90px;overflow-y:auto;font-size:11px;color:#aaa;font-family:monospace}
+.bar-bg{background:#333;height:12px;border-radius:6px;overflow:hidden;margin:3px 0 6px}
+.bar{height:100%;width:100%}
+#php{background:#2e7d32}#ehp{background:#c62828}
+.tabs{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px}
+.tabs button{flex:1;min-width:48px;padding:6px 2px;font-size:11px;background:#2a2a2a;color:#ccc;border:1px solid #444;border-radius:4px;cursor:pointer}
+.tabs button.on{background:#ffd700;color:#000}
+.tab{display:none}.tab.on{display:block}
+button{background:#ffd700;color:#000;border:none;padding:6px 10px;font-weight:bold;border-radius:4px;cursor:pointer;font-size:12px}
+button:disabled{background:#444;color:#777}
+.row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #252525;font-size:12px;gap:4px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:12px}
+.combat{position:relative;overflow:hidden}
+.floats{pointer-events:none;position:absolute;inset:0;z-index:5}
+.ft{position:absolute;font-weight:900;font-size:15px;text-shadow:0 0 4px #000;animation:up .85s forwards;white-space:nowrap}
+.ft.dp{color:#ff5252}.ft.de{color:#fff}.ft.cr{color:#ffeb3b;font-size:18px}.ft.he{color:#69f0ae}.ft.go{color:#ffd700}
+@keyframes up{to{opacity:0;transform:translateY(-50px)}}
+.buy button{flex:1;background:#333;color:#ccc}.buy button.on{background:#ffd700;color:#000}
+.buy{display:flex;gap:3px;margin-bottom:8px}
+.tag{background:#4a148c;color:#e1bee7;font-size:10px;padding:1px 4px;border-radius:3px;margin-left:3px}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;align-items:center;justify-content:center;padding:12px}
+.ov.show{display:flex}
+.md{background:#1a1a1a;border:2px solid #ffd700;border-radius:12px;padding:14px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto}
+.bc{border:2px solid #555;border-radius:8px;padding:10px;margin:6px 0;cursor:pointer;background:#222}
+.bc.sel{border-color:#ffd700;background:#3d3500}
+.bc h5{margin:0 0 3px;color:#ffd700;font-size:14px}
+.bc p{margin:0;font-size:12px;color:#bbb}
+.bd{background:#c62828;color:#fff}.bb{background:#1976d2;color:#fff}.bp{background:#7b1fa2;color:#fff}.bg{background:#2e7d32;color:#fff}
 </style>
 </head>
 <body>
 <div class="container">
 <h2>Legacy Idle RPG</h2>
-
-<div class="status-box">
-<h3>📊 総合能力値</h3>
-<div class="power-display">
-総合力: <span id="total-power">0</span>
-<div style="font-size:12px;color:#aaa;margin-top:4px">
-ベスト <span id="best-power">0</span> ｜ 🌀最高 <span id="best-infinite">0</span>F
-</div>
-<div style="font-size:12px;color:#aaa">ビルド: <span id="build-name">なし</span> ｜ 倍率 ×<span id="buff-mult">1.00</span></div>
-</div>
-<div class="grid-2">
-<div>💰 <span id="gold">0</span> G</div>
-<div>💎 <span id="crystal">0</span></div>
-<div>🔄 転生 <span id="rebirth-count">0</span>回</div>
-<div>⚔ ATK <span id="total-atk">10</span></div>
-<div>🛡 DEF <span id="total-def">0</span></div>
-<div>💥 クリ <span id="stat-crit-rate">5</span>%</div>
-<div>🔥 クリ倍 <span id="stat-crit-dmg">150</span>%</div>
-<div>💚 回復 <span id="total-regen">2</span></div>
-<div>⏳ 回復 <span id="regen-speed">1.00</span>s</div>
-<div>⚡ 攻撃 <span id="atk-speed">1.0</span>/s</div>
-</div>
-<div style="margin-top:10px;text-align:center">
-<button id="btn-rebirth" onclick="window.openRebirthPanel()">エリア3踏破で解放</button>
-</div>
+<div class="box">
+  <div style="text-align:center;color:#ffd700;font-weight:bold">総合力 <span id="pow">0</span>
+    <div style="font-size:11px;color:#aaa">ベスト <span id="bpow">0</span>｜🌀<span id="binf">0</span>F｜ビルド <span id="bname">なし</span>｜×<span id="mult">1.00</span></div>
+  </div>
+  <div class="g2">
+    <div>💰 <span id="gold">0</span></div><div>💎 <span id="crystal">0</span></div>
+    <div>🔄 <span id="reb">0</span>回</div><div>⚔ <span id="atk">10</span></div>
+    <div>🛡 <span id="def">0</div><div>💥 <span id="cr">5</span>%</div>
+    <div>🔥 <span id="cd">150</span>%</div><div>💚 <span id="reg">2</span></div>
+    <div>⚡ <span id="spd">1.0</span>/s</div><div>⏳ <span id="rsp">1.0</span>s</div>
+  </div>
+  <div style="text-align:center;margin-top:8px">
+    <button id="btnReb" type="button">エリア3踏破で解放</button>
+  </div>
 </div>
 
-<div class="status-box combat-wrap" id="combat-box">
-<div class="float-layer" id="float-layer"></div>
-<h3 id="stage-display-full">下水道の巣窟 (1階)</h3>
-<div style="font-size:12px;text-align:center;margin-bottom:6px">
-⚔ オート戦闘 (<span id="speed-indicator">1.0/s</span>)
-<span id="respawn-display" style="display:none;color:#ff9800"> / リポップ中</span>
-</div>
-<div style="font-size:12px">🛡 HP <span id="player-hp">150</span>/<span id="player-max-hp">150</span>
-<div class="hp-bar-bg"><div id="player-hp-bar" class="hp-bar"></div></div></div>
-<div style="font-size:12px">😈 <span id="enemy-name">敵</span> <span id="enemy-hp">50</span>/<span id="enemy-max-hp">50</span>
-<div class="hp-bar-bg"><div id="enemy-hp-bar" class="hp-bar"></div></div>
-<div style="font-size:10px;color:#888">敵 ATK<span id="e-atk">0</span> DEF<span id="e-def">0</span> 回<span id="e-regen">0</span></div>
-</div>
+<div class="box combat" id="combat">
+  <div class="floats" id="floats"></div>
+  <h3 id="stageTitle">下水道の巣窟 (1階)</h3>
+  <div style="font-size:12px;text-align:center;margin-bottom:4px">オート (<span id="spdInd">1.0/s</span>)<span id="repop" style="display:none;color:#ff9800"> リポップ中</span></div>
+  <div style="font-size:12px">HP <span id="phpT">150</span>/<span id="phpM">150</span><div class="bar-bg"><div class="bar" id="php"></div></div></div>
+  <div style="font-size:12px"><span id="enName">敵</span> <span id="ehpT">50</span>/<span id="ehpM">50</span><div class="bar-bg"><div class="bar" id="ehp"></div></div>
+  <div style="font-size:10px;color:#888">ATK<span id="eAtk">0</span> DEF<span id="eDef">0</span> 回<span id="eReg">0</span></div></div>
 </div>
 
-<div id="log" class="log-box"></div>
+<div class="box log" id="log"></div>
 
-<div class="tabs">
-<button class="tab-btn active" id="tab-btn-train" onclick="window.switchTab('train')">育成</button>
-<button class="tab-btn" id="tab-btn-bag" onclick="window.switchTab('bag')">バッグ</button>
-<button class="tab-btn" id="tab-btn-artifact" onclick="window.switchTab('artifact')">聖遺物</button>
-<button class="tab-btn" id="tab-btn-shop" onclick="window.switchTab('shop')">特権</button>
-<button class="tab-btn" id="tab-btn-stage" onclick="window.switchTab('stage')">ステージ</button>
-<button class="tab-btn" id="tab-btn-achieve" onclick="window.switchTab('achieve')">実績</button>
-</div>
-
-<div id="tab-train" class="tab-content active">
-<div class="buy-amount-btns">
-<button id="train-buy-1" class="active" onclick="setBuyAmount(1)">x1</button>
-<button id="train-buy-10" onclick="setBuyAmount(10)">x10</button>
-<button id="train-buy-100" onclick="setBuyAmount(100)">x100</button>
-<button id="train-buy-max" onclick="setBuyAmount('max')">MAX</button>
-</div>
-<h4>通常訓練（転生でリセット）</h4>
-<div class="item-row"><div>腕力 [Lv<span id="lv-atk">0</span>]</div><button onclick="window.train('atk')"><span id="price-train-atk">100</span>G</button></div>
-<div class="item-row"><div>体力 [Lv<span id="lv-hp">0</span>]</div><button onclick="window.train('hp')"><span id="price-train-hp">100</span>G</button></div>
-<div class="item-row"><div>装甲 [Lv<span id="lv-def">0</span>]</div><button onclick="window.train('def')"><span id="price-train-def">150</span>G</button></div>
-<div class="item-row"><div>活法 [Lv<span id="lv-regen">1</span>]</div><button onclick="window.train('regen')"><span id="price-train-regen">200</span>G</button></div>
-<h4>装備中</h4>
-<div style="font-size:12px;margin-bottom:8px">
-<div>⚔ <span id="w-name">なし</span> <span id="w-atk"></span><span id="w-eff" class="effect-tag" style="display:none"></span></div>
-<div>🛡 <span id="a-name">なし</span> <span id="a-def"></span><span id="a-eff" class="effect-tag" style="display:none"></span></div>
-<div>💍 <span id="c-name">なし</span> <span id="c-stat"></span><span id="c-eff" class="effect-tag" style="display:none"></span></div>
-</div>
-<button onclick="window.equipBestAll()">最強を一括装備</button>
+<div class="tabs" id="tabs">
+  <button type="button" data-tab="train" class="on">育成</button>
+  <button type="button" data-tab="bag">バッグ</button>
+  <button type="button" data-tab="art">聖遺物</button>
+  <button type="button" data-tab="shop">特権</button>
+  <button type="button" data-tab="stage">ステージ</button>
+  <button type="button" data-tab="ach">実績</button>
 </div>
 
-<div id="tab-bag" class="tab-content">
-<div style="font-size:12px;text-align:center;margin-bottom:6px">
-武<span id="bag-w">0</span>/<span id="bag-max-w">10</span>
-　防<span id="bag-a">0</span>/<span id="bag-max-a">10</span>
-　ア<span id="bag-c">0</span>/<span id="bag-max-c">10</span>
-</div>
-<div style="text-align:right;margin-bottom:6px"><button class="btn-danger" onclick="window.sellAllInventory()">全売却</button></div>
-<h4>武器</h4><div id="inv-weapons">なし</div>
-<h4>防具</h4><div id="inv-armors">なし</div>
-<h4>アクセ</h4><div id="inv-accessories">なし</div>
-</div>
-
-<div id="tab-artifact" class="tab-content">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<h4 style="margin:0">聖遺物</h4><button onclick="window.toggleArtSummary()">一覧</button>
-</div>
-<div id="art-summary" style="display:none;font-size:12px;color:#ffca28;margin-top:6px"></div>
-<div id="artifact-list" style="font-size:12px;color:#ffca28;margin-top:8px">未所持</div>
+<div id="tab-train" class="tab on">
+  <div class="buy" id="trainBuy">
+    <button type="button" data-n="1" class="on">x1</button>
+    <button type="button" data-n="10">x10</button>
+    <button type="button" data-n="100">x100</button>
+    <button type="button" data-n="max">MAX</button>
+  </div>
+  <div class="row"><span>腕力 Lv<span id="lvAtk">0</span></span><button type="button" data-train="atk"><span id="pAtk">100</span>G</button></div>
+  <div class="row"><span>体力 Lv<span id="lvHp">0</span></span><button type="button" data-train="hp"><span id="pHp">100</span>G</button></div>
+  <div class="row"><span>装甲 Lv<span id="lvDef">0</span></span><button type="button" data-train="def"><span id="pDef">150</span>G</button></div>
+  <div class="row"><span>活法 Lv<span id="lvReg">1</span></span><button type="button" data-train="regen"><span id="pReg">200</span>G</button></div>
+  <h4>装備</h4>
+  <div style="font-size:12px">⚔ <span id="wN">なし</span> <span id="wS"></span><span id="wE" class="tag" style="display:none"></span></div>
+  <div style="font-size:12px">🛡 <span id="aN">なし</span> <span id="aS"></span><span id="aE" class="tag" style="display:none"></span></div>
+  <div style="font-size:12px">💍 <span id="cN">なし</span> <span id="cS"></span><span id="cE" class="tag" style="display:none"></span></div>
+  <button type="button" id="btnBest" style="margin-top:6px">最強一括装備</button>
 </div>
 
-<div id="tab-shop" class="tab-content">
-<div class="crystal-bar">💎 所持: <span id="shop-crystal-display">0</span> ｜ 転生予定: <span id="pending-crystals-shop">0</span></div>
-<div class="buy-amount-btns">
-<button id="shop-buy-1" class="active" onclick="setBuyAmount(1)">x1</button>
-<button id="shop-buy-10" onclick="setBuyAmount(10)">x10</button>
-<button id="shop-buy-100" onclick="setBuyAmount(100)">x100</button>
-<button id="shop-buy-max" onclick="setBuyAmount('max')">MAX</button>
-</div>
-<h4>永続特権</h4>
-<div class="item-row"><div>ATK+20% Lv<span id="shop-atk-lv">0</span></div><button onclick="window.buyShop('atk')"><span id="price-sh-atk">1</span>💎</button></div>
-<div class="item-row"><div>DEF+20% Lv<span id="shop-def-lv">0</span></div><button onclick="window.buyShop('def')"><span id="price-sh-def">1</span>💎</button></div>
-<div class="item-row"><div>G+25% Lv<span id="shop-gold-lv">0</span></div><button onclick="window.buyShop('gold')"><span id="price-sh-gold">1</span>💎</button></div>
-<div class="item-row"><div>攻撃間隔 Lv<span id="shop-spd-lv">0</span>/59</div><button id="btn-sh-spd" onclick="window.buyShop('spd')"><span id="price-sh-spd">2</span>💎</button></div>
-<div class="item-row"><div>リポップ短縮 Lv<span id="shop-respawn-lv">0</span>/59</div><button id="btn-sh-respawn" onclick="window.buyShop('respawn')"><span id="price-sh-respawn">3</span>💎</button></div>
-<div class="item-row"><div>クリ率+1% Lv<span id="shop-crit-rate-lv">0</span>/95</div><button id="btn-sh-crit-rate" onclick="window.buyShop('crit_rate')"><span id="price-sh-crit-rate">2</span>💎</button></div>
-<div class="item-row"><div>クリ倍+10% Lv<span id="shop-crit-dmg-lv">0</span></div><button onclick="window.buyShop('crit_dmg')"><span id="price-sh-crit-dmg">2</span>💎</button></div>
-<div class="item-row"><div>バッグ+5 Lv<span id="shop-bag-lv">0</span></div><button onclick="window.buyShop('bag')"><span id="price-sh-bag">1</span>💎</button></div>
-<div class="item-row"><div>溢れ売却+5% Lv<span id="shop-autosell-lv">0</span>/10</div><button id="btn-sh-autosell" onclick="window.buyShop('autosell')"><span id="price-sh-autosell">3</span>💎</button></div>
-<div class="item-row"><div>自動換装 <span id="shop-autoequip-val">OFF</span></div><button id="btn-sh-autoequip" onclick="window.buyShop('autoequip')">50💎</button></div>
-<div class="item-row"><div>回復+20% Lv<span id="shop-regen-lv">0</span></div><button onclick="window.buyShop('regen')"><span id="price-sh-regen">2</span>💎</button></div>
-<div class="item-row"><div>訓練費軽減 Lv<span id="shop-traincost-lv">0</span>/10</div><button id="btn-sh-traincost" onclick="window.buyShop('traincost')"><span id="price-sh-traincost">4</span>💎</button></div>
-<div class="item-row"><div>＋値上限 +<span id="shop-dropmax-val">50</span></div><button onclick="window.buyShop('dropmax')"><span id="price-sh-dropmax">5</span>💎</button></div>
-<div class="item-row"><div>＋値下限 +<span id="shop-dropmin-val">1</span></div><button onclick="window.buyShop('dropmin')"><span id="price-sh-dropmin">8</span>💎</button></div>
-<h4>セーブ</h4>
-<button class="btn-blue" onclick="window.exportSave()">エクスポート</button>
-<button class="btn-blue" onclick="document.getElementById('import-file').click()">インポート</button>
-<input type="file" id="import-file" accept=".json" style="display:none" onchange="window.importSave(event)">
-<button class="btn-danger" onclick="window.resetGame()">初期化</button>
+<div id="tab-bag" class="tab">
+  <div style="font-size:12px;text-align:center">武<span id="bw">0</span>/<span id="bmw">10</span> 防<span id="ba">0</span>/<span id="bma">10</span> ア<span id="bc">0</span>/<span id="bmc">10</span>
+  <button type="button" class="bd" id="btnSellAll">全売却</button></div>
+  <h4>武器</h4><div id="invW">なし</div>
+  <h4>防具</h4><div id="invA">なし</div>
+  <h4>アクセ</h4><div id="invC">なし</div>
 </div>
 
-<div id="tab-stage" class="tab-content">
-<h4>ステージ</h4>
-<div id="stage-selector"></div>
-<div style="margin-top:14px;text-align:center">
-<button class="btn-purple" style="width:100%;padding:10px" onclick="window.enterInfinite()">🌀 無限回廊</button>
-<button id="btn-leave-infinite" class="btn-danger" style="width:100%;margin-top:6px;display:none" onclick="window.leaveInfinite()">離脱</button>
-</div>
+<div id="tab-art" class="tab">
+  <button type="button" id="btnArtSum">合計一覧</button>
+  <div id="artSum" style="display:none;font-size:12px;color:#ffca28;margin:6px 0"></div>
+  <div id="artList" style="font-size:12px;color:#ffca28">未所持</div>
 </div>
 
-<div id="tab-achieve" class="tab-content">
-<h4>実績</h4>
-<div id="achieve-list"></div>
-</div>
+<div id="tab-shop" class="tab">
+  <div style="text-align:center;color:#ce93d8;margin-bottom:6px">💎 <span id="shopCry">0</span>｜転生予定 <span id="shopPend">0</span></div>
+  <div class="buy" id="shopBuy">
+    <button type="button" data-n="1" class="on">x1</button>
+    <button type="button" data-n="10">x10</button>
+    <button type="button" data-n="100">x100</button>
+    <button type="button" data-n="max">MAX</button>
+  </div>
+  <div id="shopRows"></div>
+  <h4>セーブ</h4>
+  <button type="button" class="bb" id="btnExp">出力</button>
+  <button type="button" class="bb" id="btnImp">読込</button>
+  <input type="file" id="impFile" accept=".json" style="display:none">
+  <button type="button" class="bd" id="btnReset">初期化</button>
 </div>
 
-<!-- 転生ビルド選択モーダル（画面中央） -->
-<div id="rebirth-overlay" class="modal-overlay">
-  <div class="modal-box">
-    <h3 style="margin-bottom:4px">🔄 転生 — ビルド選択</h3>
-    <p style="text-align:center;font-size:13px;color:#ccc;margin:0 0 12px">
-      獲得結晶 <b style="color:#ce93d8" id="rebirth-pending">0</b> 💎
-      ／ 次倍率 ×<b id="rebirth-next-mult">1.00</b>
-    </p>
-    <div id="build-list"></div>
-    <div style="display:flex;gap:8px;margin-top:12px">
-      <button class="btn-green" style="flex:1;padding:12px;font-size:14px" onclick="window.confirmRebirth()">このビルドで転生</button>
-      <button class="btn-danger" style="flex:1;padding:12px" onclick="window.closeRebirthPanel()">キャンセル</button>
+<div id="tab-stage" class="tab">
+  <div id="stageList"></div>
+  <button type="button" class="bp" id="btnInf" style="width:100%;margin-top:10px;padding:10px">🌀 無限回廊</button>
+  <button type="button" class="bd" id="btnLeaveInf" style="width:100%;margin-top:6px;display:none">離脱</button>
+</div>
+
+<div id="tab-ach" class="tab"><div id="achList"></div></div>
+</div>
+
+<div class="ov" id="rebOv">
+  <div class="md">
+    <h3>🔄 転生 — ビルド選択</h3>
+    <p style="text-align:center;font-size:13px;color:#ccc">結晶 <b id="rebPend" style="color:#ce93d8">0</b> ／ 次倍率 ×<b id="rebNext">1.00</b></p>
+    <div id="buildList"></div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button type="button" class="bg" id="btnConfirmReb" style="flex:1;padding:12px">このビルドで転生</button>
+      <button type="button" class="bd" id="btnCancelReb" style="flex:1;padding:12px">キャンセル</button>
     </div>
   </div>
 </div>
@@ -225,877 +152,682 @@ button:disabled{background:#444;color:#777;cursor:not-allowed}
 <script>
 (function(){
 "use strict";
-
 var STAGES=[
-{id:1,name:"下水道の巣窟",multiplier:1,art:"汚れた下水管",desc:"ゴールド+15%",type:"gold"},
-{id:2,name:"路地裏の闇賭場",multiplier:5,art:"イカサマのダイス",desc:"攻撃+15%",type:"atk"},
-{id:3,name:"ジャンク鉄鋼山",multiplier:25,art:"錆びた歯車",desc:"防御+15%",type:"def"},
-{id:4,name:"強欲ゴブリン村",multiplier:125,art:"黄金の入歯",desc:"ゴールド+15%",type:"gold"},
-{id:5,name:"裏社会の闇ギルド",multiplier:625,art:"黒の契約書",desc:"クリ倍+20%",type:"crit_dmg"},
-{id:6,name:"不夜城の魔塔",multiplier:3125,art:"吸血鬼の牙",desc:"回復+15%",type:"regen_val"},
-{id:7,name:"亡者の眠る底石",multiplier:15625,art:"静寂のドクロ",desc:"回復速度短縮",type:"regen_spd"},
-{id:8,name:"深淵の古戦場",multiplier:78125,art:"折れた覇王の剣",desc:"攻撃+15%",type:"atk"},
-{id:9,name:"邪神のマモン宮殿",multiplier:390625,art:"無限の財布",desc:"結晶+15%",type:"crystal_up"},
-{id:10,name:"債務終焉の地",multiplier:1953125,art:"白紙の契約書",desc:"全能力+15%",type:"all_up"}
+{id:1,name:"下水道の巣窟",m:1,art:"汚れた下水管",d:"G+15%",t:"gold"},
+{id:2,name:"路地裏の闇賭場",m:5,art:"イカサマのダイス",d:"ATK+15%",t:"atk"},
+{id:3,name:"ジャンク鉄鋼山",m:25,art:"錆びた歯車",d:"DEF+15%",t:"def"},
+{id:4,name:"強欲ゴブリン村",m:125,art:"黄金の入歯",d:"G+15%",t:"gold"},
+{id:5,name:"裏社会の闇ギルド",m:625,art:"黒の契約書",d:"クリ倍+20%",t:"crit_dmg"},
+{id:6,name:"不夜城の魔塔",m:3125,art:"吸血鬼の牙",d:"回復+15%",t:"regen_val"},
+{id:7,name:"亡者の眠る底石",m:15625,art:"静寂のドクロ",d:"回復速度",t:"regen_spd"},
+{id:8,name:"深淵の古戦場",m:78125,art:"折れた覇王の剣",d:"ATK+15%",t:"atk"},
+{id:9,name:"邪神のマモン宮殿",m:390625,art:"無限の財布",d:"結晶+15%",t:"crystal_up"},
+{id:10,name:"債務終焉の地",m:1953125,art:"白紙の契約書",d:"全能力+15%",t:"all_up"}
 ];
-
 var BUILDS={
-none:{name:"なし",desc:"特典なし（バランス）"},
+none:{name:"なし",desc:"特典なし"},
 berserker:{name:"狂戦士",desc:"ATK+60% / DEF半減 / 低HPで攻撃上昇"},
 tank:{name:"重装",desc:"DEF+80% / 回復+50% / 攻撃半速 / 反撃"},
-merchant:{name:"商人",desc:"ゴールド×2.5 / ドロップUP / 戦闘-30%"},
+merchant:{name:"商人",desc:"G×2.5 / ドロップUP / 戦闘-30%"},
 assassin:{name:"暗殺者",desc:"クリ特化 / ボスに弱い"}
 };
-
 var EFFECTS=[
-{id:"lifesteal",name:"吸血",fmt:function(v){return v+"%回復"}},
-{id:"gold_kill",name:"強欲",fmt:function(v){return "撃破G+"+v+"%"}},
-{id:"crit_rate",name:"鋭利",fmt:function(v){return "クリ+"+v+"%"}},
-{id:"boss_dmg",name:"討伐",fmt:function(v){return "ボス+"+v+"%"}},
-{id:"dmg_reduce",name:"守護",fmt:function(v){return "被ダメ-"+v+"%"}},
-{id:"flat_atk",name:"剛力",fmt:function(v){return "ATK+"+v}},
-{id:"flat_def",name:"堅牢",fmt:function(v){return "DEF+"+v}}
+{id:"lifesteal",name:"吸血",f:function(v){return v+"%回復"}},
+{id:"gold_kill",name:"強欲",f:function(v){return "G+"+v+"%"}},
+{id:"crit_rate",name:"鋭利",f:function(v){return "クリ+"+v+"%"}},
+{id:"boss_dmg",name:"討伐",f:function(v){return "ボス+"+v+"%"}},
+{id:"dmg_reduce",name:"守護",f:function(v){return "被ダメ-"+v+"%"}},
+{id:"flat_atk",name:"剛力",f:function(v){return "ATK+"+v}},
+{id:"flat_def",name:"堅牢",f:function(v){return "DEF+"+v}}
+];
+var ACH=[
+{id:"reb1",name:"初転生",c:function(g){return g.rebirths>=1},r:{type:"atk",v:0.05},t:"ATK+5%"},
+{id:"reb5",name:"転生5",c:function(g){return g.rebirths>=5},r:{type:"gold",v:0.1},t:"G+10%"},
+{id:"s3",name:"エリア3クリア",c:function(g){return cleared(g)>=3},r:{type:"def",v:0.05},t:"DEF+5%"},
+{id:"s6",name:"エリア6到達",c:function(g){return g.maxU>=6},r:{type:"regen",v:0.1},t:"回復+10%"},
+{id:"s10",name:"エリア10",c:function(g){return g.maxU>=10},r:{type:"all",v:0.08},t:"全+8%"},
+{id:"inf10",name:"無限10F",c:function(g){return g.bestInf>=10},r:{type:"atk",v:0.05},t:"ATK+5%"},
+{id:"inf50",name:"無限50F",c:function(g){return g.bestInf>=50},r:{type:"crit",v:5},t:"クリ+5%"},
+{id:"eff",name:"特殊装備",c:function(g){return g.foundEff},r:{type:"drop",v:0.05},t:"ドロップ+5%"}
 ];
 
-var ACHIEVEMENTS=[
-{id:"reb1",name:"初めての転生",check:function(g){return g.rebirths>=1},reward:{type:"atk",v:0.05},text:"永久ATK+5%"},
-{id:"reb5",name:"転生熟練者",check:function(g){return g.rebirths>=5},reward:{type:"gold",v:0.1},text:"永久G+10%"},
-{id:"reb20",name:"転生の達人",check:function(g){return g.rebirths>=20},reward:{type:"atk",v:0.1},text:"永久ATK+10%"},
-{id:"stage3",name:"ジャンク到達",check:function(g){return g.maxUnlockedStageId>=4},reward:{type:"def",v:0.05},text:"永久DEF+5%"},
-{id:"stage6",name:"魔塔到達",check:function(g){return g.maxUnlockedStageId>=6},reward:{type:"regen",v:0.1},text:"永久回復+10%"},
-{id:"stage10",name:"終焉の地",check:function(g){return g.maxUnlockedStageId>=10},reward:{type:"all",v:0.08},text:"全ステ+8%"},
-{id:"clear3",name:"3エリアクリア",check:function(g){return countCleared(g)>=3},reward:{type:"crystal",v:0.1},text:"結晶+10%"},
-{id:"clear7",name:"7エリアクリア",check:function(g){return countCleared(g)>=7},reward:{type:"crystal",v:0.15},text:"結晶+15%"},
-{id:"inf10",name:"無限10F",check:function(g){return g.bestInfinite>=10},reward:{type:"atk",v:0.05},text:"永久ATK+5%"},
-{id:"inf50",name:"無限50F",check:function(g){return g.bestInfinite>=50},reward:{type:"crit",v:5},text:"クリ率+5%"},
-{id:"inf100",name:"無限100F",check:function(g){return g.bestInfinite>=100},reward:{type:"all",v:0.1},text:"全ステ+10%"},
-{id:"art5",name:"聖遺物5個",check:function(g){var n=0;for(var k in g.artifacts)n+=g.artifacts[k]||0;return n>=5},reward:{type:"gold",v:0.08},text:"G+8%"},
-{id:"gold1m",name:"成金",check:function(g){return (g.totalGoldEarned||0)>=1e6},reward:{type:"gold",v:0.12},text:"G+12%"},
-{id:"equip_eff",name:"特殊装備発見",check:function(g){return !!(g.stats&&g.stats.foundEffect)},reward:{type:"drop",v:0.05},text:"ドロップ+5%"}
-];
-
-var defaultData={
-gold:0,rebirths:0,lvAtk:0,lvHp:0,lvDef:0,lvRegen:1,
-currentStageId:1,stageMinor:1,maxUnlockedStageId:1,stageFloors:{},
-playerHp:150,enemyHp:50,
-wAtk:0,wName:"なし",wPlus:0,wEffect:null,
-aDef:0,aName:"なし",aPlus:0,aEffect:null,
-cHp:0,cRegen:0,cName:"なし",cPlus:0,cEffect:null,
-crystal:0,shAtk:0,shDef:0,shGold:0,shSpd:0,shRespawn:0,
-shCritRate:0,shCritDmg:0,shBag:0,shAutoSell:0,shAutoEquip:0,shRegen:0,
-shDropMax:0,shDropMin:0,shTrainCost:0,
-bestPower:0,bestInfinite:0,inInfinite:false,infiniteFloor:1,
-build:"none",pendingBuild:"none",
-achievements:{},totalGoldEarned:0,
-stats:{foundEffect:false,kills:0},
-weaponsBag:[],armorsBag:[],accessoriesBag:[],
-artifacts:{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0}
+var defG={
+gold:0,rebirths:0,lvAtk:0,lvHp:0,lvDef:0,lvReg:1,
+stage:1,floor:1,maxU:1,floors:{},
+hp:150,
+wAtk:0,wName:"なし",wPlus:0,wEff:null,
+aDef:0,aName:"なし",aPlus:0,aEff:null,
+cHp:0,cReg:0,cName:"なし",cPlus:0,cEff:null,
+crystal:0,shAtk:0,shDef:0,shGold:0,shSpd:0,shRes:0,shCR:0,shCD:0,shBag:0,shAS:0,shAE:0,shReg:0,shDMax:0,shDMin:0,shTC:0,
+bestPow:0,bestInf:0,inf:false,infF:1,build:"none",pending:"none",
+ach:{},goldEarned:0,foundEff:false,kills:0,
+bagW:[],bagA:[],bagC:[],
+arts:{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0}
 };
 
-var game=clone(defaultData);
-var enemy={maxHp:50,atk:5,def:0,regen:0};
-var playerInterval=null,enemyInterval=null,regenInterval=null,enemyRegenInterval=null,respawnTimeout=null;
-var isRespawning=false,buyAmount=1,artSummaryOpen=false;
+var G=JSON.parse(JSON.stringify(defG));
+var E={hp:50,atk:5,def:0,reg:0,max:50};
+var tP=null,tE=null,tR=null,tER=null,tSpawn=null;
+var repop=false, buyN=1;
+var EN=["ハウンド","インプ","ゴブリン","マフィア","用心棒","錬金術師","オーク","ナイト","デーモン"];
+var WP=["ボロい剣","鉄のつるぎ","ダガー","シャドウブレード","レガシーソード"];
+var AP=["布の服","レザー","鉄胸当て","合金鎧","ダークプレート"];
+var CP=["木の指輪","銀の首飾","守護腕輪","生命の護符","永遠の徽章"];
 
-var enemies=["ハウンド","インプ","ゴブリン","マフィア","用心棒","錬金術師","ブラックオーク","シャドウナイト","デーモン債務兵"];
-var wPool=["ボロい剣","鉄のつるぎ","ハクスラダガー","シャドウブレード","レガシーソード"];
-var aPool=["布の服","レザーアーマー","鉄の胸当て","合金の硬質鎧","ダークプレート"];
-var cPool=["木の指輪","銀の首飾り","守護の腕輪","生命のタリスマン","永遠の徽章"];
-
-function clone(o){return JSON.parse(JSON.stringify(o))}
 function $(id){return document.getElementById(id)}
-function S(id,v){var e=$(id);if(e)e.innerText=v}
+function txt(id,v){var e=$(id);if(e)e.textContent=String(v)}
+function clone(o){return JSON.parse(JSON.stringify(o))}
 
-/* エリア3クリア = maxUnlockedStageId >= 4（エリア3の100F踏破でエリア4解放） */
-function isRebirthUnlocked(){
-  return countCleared(game)>=3 || (game.maxUnlockedStageId||1)>=4;
-}
-
-function countCleared(g){
-  var n=Math.max(0,(g.maxUnlockedStageId||1)-1);
-  if(!g.inInfinite && (g.stageMinor||1)>=100) n=Math.max(n, g.currentStageId||1);
-  if(g.stageFloors){
-    for(var i=1;i<=10;i++){
-      if((g.stageFloors[String(i)]||0)>=100) n=Math.max(n,i);
-    }
-  }
+function cleared(g){
+  var n=Math.max(0,(g.maxU||1)-1);
+  if(!g.inf && (g.floor||1)>=100) n=Math.max(n,g.stage||1);
+  if(g.floors){ for(var i=1;i<=10;i++) if((g.floors[String(i)]||0)>=100) n=Math.max(n,i); }
   return Math.min(10,n);
 }
-function getTotalFloors(g){
-  var sum=0, maxU=g.maxUnlockedStageId||1;
+function totalFloors(g){
+  var s=0,u=g.maxU||1;
   for(var i=1;i<=10;i++){
-    if(i<maxU) sum+=100;
-    else if(i===maxU){
-      var fl=g.stageFloors&&g.stageFloors[String(i)];
-      if(fl==null) fl=(i===g.currentStageId)?(g.stageMinor||1):1;
-      sum+=Math.min(100,fl);
+    if(i<u) s+=100;
+    else if(i===u){
+      var f=g.floors&&g.floors[String(i)];
+      if(f==null) f=(i===g.stage)?(g.floor||1):1;
+      s+=Math.min(100,f);
     }
   }
-  return sum;
+  return s;
 }
+function rebOK(){ return cleared(G)>=3 || (G.maxU||1)>=4; }
+function mult(){ return 1+Math.log((G.rebirths||0)+1); }
 
-function getMult(){return 1+Math.log((game.rebirths||0)+1)}
-function getArtBonus(type){
-  var bonus=0;
-  STAGES.forEach(function(st){
-    var cnt=game.artifacts[st.id]||0;
-    if(st.type===type){
-      if(["gold","atk","def","regen_val","crystal_up"].indexOf(type)>=0) bonus+=cnt*0.15;
-      if(type==="crit_dmg") bonus+=cnt*0.2;
-      if(type==="regen_spd") bonus+=cnt*0.05;
-    }
-    if(st.type==="all_up"&&["atk","def","regen_val"].indexOf(type)>=0) bonus+=cnt*0.15;
-  });
-  return bonus;
-}
-function getAchBonus(type){
+function artB(type){
   var b=0;
-  ACHIEVEMENTS.forEach(function(a){
-    if(!game.achievements[a.id]) return;
-    var r=a.reward;
-    if(r.type===type) b+=r.v;
-    if(r.type==="all"&&["atk","def","regen","gold"].indexOf(type)>=0) b+=r.v;
+  STAGES.forEach(function(st){
+    var c=G.arts[st.id]||0;
+    if(st.t===type){
+      if(type==="crit_dmg") b+=c*0.2;
+      else if(type==="regen_spd") b+=c*0.05;
+      else b+=c*0.15;
+    }
+    if(st.t==="all_up"&&(type==="atk"||type==="def"||type==="regen_val")) b+=c*0.15;
   });
   return b;
 }
-function getEquipEffect(id){
-  var sum=0;
-  [game.wEffect,game.aEffect,game.cEffect].forEach(function(e){
-    if(e&&e.id===id) sum+=Number(e.v)||0;
+function achB(type){
+  var b=0;
+  ACH.forEach(function(a){
+    if(!G.ach[a.id]) return;
+    if(a.r.type===type) b+=a.r.v;
+    if(a.r.type==="all"&&(type==="atk"||type==="def"||type==="regen"||type==="gold")) b+=a.r.v;
   });
-  return sum;
+  return b;
 }
-function effLv(stat){
-  if(game.inInfinite) return stat==="regen"?1:0;
-  if(stat==="atk") return game.lvAtk;
-  if(stat==="hp") return game.lvHp;
-  if(stat==="def") return game.lvDef;
-  return game.lvRegen;
+function eqE(id){
+  var s=0;
+  [G.wEff,G.aEff,G.cEff].forEach(function(e){ if(e&&e.id===id) s+=(+e.v||0); });
+  return s;
 }
-function getMaxHp(){
-  var base=(150+effLv("hp")*30+(game.cHp||0))*getMult()*(1+getAchBonus("all"));
-  if(game.build==="berserker") base*=0.85;
-  return Math.max(1,Math.floor(base));
+function lv(k){
+  if(G.inf) return k==="reg"?1:0;
+  return {atk:G.lvAtk,hp:G.lvHp,def:G.lvDef,reg:G.lvReg}[k]||0;
 }
-function getAtk(){
-  var w=Math.max(0,game.wAtk||0)+getEquipEffect("flat_atk");
-  var base=(10+effLv("atk")*5+w)*getMult();
-  base*=(1+game.shAtk*0.2)*(1+getArtBonus("atk"))*(1+getAchBonus("atk"))*(1+getAchBonus("all"));
-  if(game.build==="berserker"){
-    base*=1.6;
-    var miss=1-Math.max(0,game.playerHp)/Math.max(1,getMaxHp());
-    base*=(1+miss*0.8);
-  }
-  if(game.build==="merchant") base*=0.7;
-  if(game.build==="assassin") base*=1.1;
-  return Math.max(1,Math.floor(base));
+function maxHp(){
+  var b=(150+lv("hp")*30+(G.cHp||0))*mult()*(1+achB("all"));
+  if(G.build==="berserker") b*=0.85;
+  return Math.max(1,Math.floor(b));
 }
-function getDef(){
-  var a=Math.max(0,game.aDef||0)+getEquipEffect("flat_def");
-  var base=(effLv("def")*2+a)*getMult();
-  base*=(1+game.shDef*0.2)*(1+getArtBonus("def"))*(1+getAchBonus("def"))*(1+getAchBonus("all"));
-  if(game.build==="berserker") base*=0.5;
-  if(game.build==="tank") base*=1.8;
-  if(game.build==="merchant") base*=0.7;
-  return Math.max(0,Math.floor(base));
+function atk(){
+  var b=(10+lv("atk")*5+Math.max(0,G.wAtk)+eqE("flat_atk"))*mult();
+  b*=(1+G.shAtk*0.2)*(1+artB("atk"))*(1+achB("atk"))*(1+achB("all"));
+  if(G.build==="berserker"){ b*=1.6; b*=(1+(1-G.hp/Math.max(1,maxHp()))*0.8); }
+  if(G.build==="merchant") b*=0.7;
+  if(G.build==="assassin") b*=1.1;
+  return Math.max(1,Math.floor(b));
 }
-function getRegenVal(){
-  var base=(effLv("regen")*2+(game.cRegen||0))*(1+game.shRegen*0.2)*(1+getArtBonus("regen_val"))*(1+getAchBonus("regen"))*(1+getAchBonus("all"));
-  if(game.build==="tank") base*=1.5;
-  if(game.build==="merchant") base*=0.8;
-  return Math.max(0,Math.floor(base));
+function def(){
+  var b=(lv("def")*2+Math.max(0,G.aDef)+eqE("flat_def"))*mult();
+  b*=(1+G.shDef*0.2)*(1+artB("def"))*(1+achB("def"))*(1+achB("all"));
+  if(G.build==="berserker") b*=0.5;
+  if(G.build==="tank") b*=1.8;
+  if(G.build==="merchant") b*=0.7;
+  return Math.max(0,Math.floor(b));
 }
-function getRegenSpeed(){return Math.max(200,Math.floor(1000*Math.pow(0.95,getArtBonus("regen_spd")/0.05)))}
-function getCritRate(){
-  var r=5+game.shCritRate+getEquipEffect("crit_rate")+getAchBonus("crit");
-  if(game.build==="assassin") r+=25;
-  return Math.min(95,r);
+function reg(){
+  var b=(lv("reg")*2+(G.cReg||0))*(1+G.shReg*0.2)*(1+artB("regen_val"))*(1+achB("regen"))*(1+achB("all"));
+  if(G.build==="tank") b*=1.5;
+  if(G.build==="merchant") b*=0.8;
+  return Math.max(0,Math.floor(b));
 }
-function getCritDmg(){
-  var m=1.5+game.shCritDmg*0.1+getArtBonus("crit_dmg");
-  if(game.build==="assassin") m+=0.4;
-  return m;
-}
-function getBagMax(){return 10+game.shBag*5}
-function getDropMaxPlus(){return Math.min(9999,50+game.shDropMax*80)}
-function getDropMinPlus(){return Math.min(9000,Math.min(1+game.shDropMin*40,getDropMaxPlus()))}
-function getTrainCostReduce(){return Math.min(0.5,game.shTrainCost*0.05)}
-function getTrainCost(type,lv){
+function regSpd(){ return Math.max(200,Math.floor(1000*Math.pow(0.95,artB("regen_spd")/0.05))); }
+function critR(){ var r=5+G.shCR+eqE("crit_rate")+achB("crit"); if(G.build==="assassin") r+=25; return Math.min(95,r); }
+function critD(){ var m=1.5+G.shCD*0.1+artB("crit_dmg"); if(G.build==="assassin") m+=0.4; return m; }
+function bagMax(){ return 10+G.shBag*5; }
+function dMax(){ return Math.min(9999,50+G.shDMax*80); }
+function dMin(){ return Math.min(9000,Math.min(1+G.shDMin*40,dMax())); }
+function trainCost(type,l){
   var base={atk:100,hp:100,def:150,regen:200}[type]||100;
-  return Math.max(1,Math.floor(base*(1+lv*0.012+Math.sqrt(lv)*0.8)*(1-getTrainCostReduce())));
+  return Math.max(1,Math.floor(base*(1+l*0.012+Math.sqrt(l)*0.8)*(1-Math.min(0.5,G.shTC*0.05))));
 }
-function getActiveStage(){return STAGES.find(function(s){return s.id===game.currentStageId})||STAGES[0]}
-function isBoss(){return !game.inInfinite&&game.stageMinor===100}
-function rand(a,b){return a+Math.random()*(b-a)}
+function stage(){ return STAGES.find(function(s){return s.id===G.stage})||STAGES[0]; }
+function isBoss(){ return !G.inf && G.floor===100; }
+function rnd(a,b){ return a+Math.random()*(b-a); }
 
-function getEnemyBase(){
-  if(game.inInfinite){
-    var f=Math.max(1,game.infiniteFloor);
-    return{
-      hp:Math.floor(50*1953125*4*Math.pow(1.15,f-1)),
-      atk:Math.floor(8*1953125*Math.pow(1.14,f-1)),
-      def:Math.floor(3*1953125*Math.pow(1.12,f-1)),
-      regen:Math.floor(2*1953125*0.01*Math.pow(1.1,f-1))
-    };
+function enemyBase(){
+  if(G.inf){
+    var f=Math.max(1,G.infF);
+    return {hp:Math.floor(50*1953125*4*Math.pow(1.15,f-1)),atk:Math.floor(8*1953125*Math.pow(1.14,f-1)),def:Math.floor(3*1953125*Math.pow(1.12,f-1)),reg:Math.floor(2*1953125*0.01*Math.pow(1.1,f-1))};
   }
-  var m=getActiveStage().multiplier, sb=1+game.currentStageId*0.12;
-  return{hp:Math.floor(50*m),atk:Math.floor(7*m*sb),def:Math.floor(m*sb),regen:Math.floor(m*0.15*sb)};
+  var m=stage().m, sb=1+G.stage*0.12;
+  return {hp:Math.floor(50*m),atk:Math.floor(7*m*sb),def:Math.floor(m*sb),reg:Math.floor(m*0.15*sb)};
 }
 function rollEnemy(){
-  var b=getEnemyBase(), boss=isBoss();
-  enemy.maxHp=Math.max(1,Math.floor(b.hp*(boss?4:1)*rand(0.8,1.2)));
-  enemy.atk=Math.max(1,Math.floor(b.atk*(boss?1.25:1)*rand(0.85,1.15)));
-  enemy.def=Math.max(0,Math.floor(b.def*rand(0.75,1.25)));
-  enemy.regen=Math.max(0,Math.floor(b.regen*rand(0.7,1.3)));
-  game.enemyHp=enemy.maxHp;
+  var b=enemyBase(), boss=isBoss();
+  E.max=Math.max(1,Math.floor(b.hp*(boss?4:1)*rnd(0.8,1.2)));
+  E.atk=Math.max(1,Math.floor(b.atk*(boss?1.25:1)*rnd(0.85,1.15)));
+  E.def=Math.max(0,Math.floor(b.def*rnd(0.75,1.25)));
+  E.reg=Math.max(0,Math.floor(b.reg*rnd(0.7,1.3)));
+  E.hp=E.max;
 }
-function minDmg(){
-  var e=enemy.atk||1;
-  return Math.max(1,Math.floor(e*(game.inInfinite?0.06:(0.03+game.currentStageId*0.007))));
-}
-function dmgTaken(){
-  var d=Math.max(minDmg(),Math.floor(enemy.atk*(100/(100+getDef()))));
-  var red=getEquipEffect("dmg_reduce");
-  if(red>0) d=Math.floor(d*(1-Math.min(0.5,red/100)));
+function minD(){ return Math.max(1,Math.floor(E.atk*(G.inf?0.06:(0.03+G.stage*0.007)))); }
+function taken(){
+  var d=Math.max(minD(),Math.floor(E.atk*(100/(100+def()))));
+  var r=eqE("dmg_reduce"); if(r>0) d=Math.floor(d*(1-Math.min(0.5,r/100)));
   return Math.max(1,d);
 }
-function dmgDeal(raw){
-  var d=Math.max(1,Math.floor(raw*(100/(100+enemy.def))));
-  if(isBoss()){
-    d=Math.floor(d*(1+getEquipEffect("boss_dmg")/100));
-    if(game.build==="assassin") d=Math.floor(d*0.65);
-  }
+function deal(raw){
+  var d=Math.max(1,Math.floor(raw*(100/(100+E.def))));
+  if(isBoss()){ d=Math.floor(d*(1+eqE("boss_dmg")/100)); if(G.build==="assassin") d=Math.floor(d*0.65); }
   return d;
 }
-function getGold(){
-  var g=game.inInfinite?5000*Math.pow(1.1,game.infiniteFloor-1):20*getActiveStage().multiplier;
-  g*=(1+game.shGold*0.25)*(1+getArtBonus("gold"))*(1+getAchBonus("gold"));
-  if(game.build==="merchant") g*=2.5;
-  g*=(1+getEquipEffect("gold_kill")/100);
+function gold(){
+  var g=G.inf?5000*Math.pow(1.1,G.infF-1):20*stage().m;
+  g*=(1+G.shGold*0.25)*(1+artB("gold"))*(1+achB("gold"));
+  if(G.build==="merchant") g*=2.5;
+  g*=(1+eqE("gold_kill")/100);
   return Math.floor(g);
 }
-function calculateCrystals(){
-  if(game.inInfinite) return 0;
-  if(!isRebirthUnlocked()) return 0;
-  var base=countCleared(game)*20 + Math.floor(getTotalFloors(game)/50);
-  if(base<=0) return 0;
-  return Math.floor(base*(1+getArtBonus("crystal_up")+getAchBonus("crystal")));
+function crystals(){
+  if(G.inf||!rebOK()) return 0;
+  var base=cleared(G)*20+Math.floor(totalFloors(G)/50);
+  return Math.max(0,Math.floor(base*(1+artB("crystal_up")+achB("crystal"))));
 }
-function getAtkInterval(){
-  var f=Math.max(1,60-game.shSpd);
-  if(game.build==="tank") f=Math.floor(f*2);
+function atkInt(){
+  var f=Math.max(1,60-G.shSpd);
+  if(G.build==="tank") f=Math.floor(f*2);
   return f*Math.floor(1000/60);
 }
-function getRespawnDelay(){return Math.max(1,60-game.shRespawn)*Math.floor(1000/60)}
-function getTotalPower(){
-  var mult=getMult();
-  var atk=Math.floor((10+Math.max(0,game.wAtk||0))*mult*(1+game.shAtk*0.2)*(1+getArtBonus("atk")));
-  var def=Math.floor(Math.max(0,game.aDef||0)*mult*(1+game.shDef*0.2)*(1+getArtBonus("def")));
-  var hp=Math.floor((150+(game.cHp||0))*mult);
-  var reg=Math.floor((2+(game.cRegen||0))*(1+game.shRegen*0.2)*(1+getArtBonus("regen_val")));
-  var cr=getCritRate()/100, cd=getCritDmg(), spd=1000/getAtkInterval();
-  return Math.floor(atk*10+def*15+hp*0.5+atk*cr*(cd-1)*20+reg*8+spd*80+game.shBag*30);
+function resDelay(){ return Math.max(1,60-G.shRes)*Math.floor(1000/60); }
+function power(){
+  var m=mult();
+  var a=Math.floor((10+Math.max(0,G.wAtk))*m*(1+G.shAtk*0.2)*(1+artB("atk")));
+  var d=Math.floor(Math.max(0,G.aDef)*m*(1+G.shDef*0.2)*(1+artB("def")));
+  var h=Math.floor((150+(G.cHp||0))*m);
+  var r=Math.floor((2+(G.cReg||0))*(1+G.shReg*0.2)*(1+artB("regen_val")));
+  var cr=critR()/100,cd=critD(),sp=1000/atkInt();
+  return Math.floor(a*10+d*15+h*0.5+a*cr*(cd-1)*20+r*8+sp*80+G.shBag*30);
 }
 
-function addLog(t){
-  var l=$("log"); if(!l) return;
-  var d=document.createElement("div"); d.textContent=t; l.appendChild(d);
-  while(l.childNodes.length>25) l.removeChild(l.firstChild);
-  l.scrollTop=l.scrollHeight;
+function log(t){
+  var el=$("log"); if(!el) return;
+  var d=document.createElement("div"); d.textContent=t; el.appendChild(d);
+  while(el.childNodes.length>20) el.removeChild(el.firstChild);
+  el.scrollTop=el.scrollHeight;
 }
-function spawnFloat(text, cls, side){
-  var layer=$("float-layer"); if(!layer) return;
+function floatT(t,cls,side){
+  var layer=$("floats"); if(!layer) return;
   var el=document.createElement("div");
-  el.className="float-text "+cls;
-  el.textContent=text;
-  el.style.left=(side==="left"?15+Math.random()*20:side==="right"?55+Math.random()*25:35+Math.random()*30)+"%";
-  el.style.top=(35+Math.random()*25)+"%";
+  el.className="ft "+cls; el.textContent=t;
+  el.style.left=(side==="L"?18:side==="R"?58:38)+Math.random()*18+"%";
+  el.style.top=30+Math.random()*30+"%";
   layer.appendChild(el);
-  setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },950);
+  setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },900);
 }
-function saveFloor(){ if(!game.inInfinite) game.stageFloors[String(game.currentStageId)]=game.stageMinor }
-function checkAchievements(){
-  ACHIEVEMENTS.forEach(function(a){
-    if(game.achievements[a.id]) return;
-    if(a.check(game)){
-      game.achievements[a.id]=true;
-      addLog("🏅 実績: "+a.name);
-      spawnFloat("🏅"+a.name,"heal","center");
-    }
+function saveFloor(){ if(!G.inf) G.floors[String(G.stage)]=G.floor; }
+function checkAch(){
+  ACH.forEach(function(a){
+    if(G.ach[a.id]) return;
+    if(a.c(G)){ G.ach[a.id]=true; log("🏅 "+a.name); floatT("🏅"+a.name,"he","C"); }
   });
 }
-function effectLabel(e){
+function effLab(e){
   if(!e) return "";
-  var def=EFFECTS.find(function(x){return x.id===e.id});
-  return def?def.name+"("+def.fmt(e.v)+")":e.id;
+  var d=EFFECTS.find(function(x){return x.id===e.id});
+  return d?d.name+"("+d.f(e.v)+")":"";
 }
-function rollEffect(){
+function rollEff(){
   if(Math.random()>0.28) return null;
   var e=EFFECTS[Math.floor(Math.random()*EFFECTS.length)];
-  var v;
+  var v=5+Math.floor(Math.random()*20);
   if(e.id==="lifesteal") v=3+Math.floor(Math.random()*8);
-  else if(e.id==="gold_kill") v=10+Math.floor(Math.random()*41);
-  else if(e.id==="crit_rate") v=2+Math.floor(Math.random()*9);
-  else if(e.id==="boss_dmg") v=15+Math.floor(Math.random()*36);
-  else if(e.id==="dmg_reduce") v=3+Math.floor(Math.random()*13);
-  else if(e.id==="flat_atk") v=5+Math.floor(Math.random()*31);
-  else v=3+Math.floor(Math.random()*21);
-  if(!game.stats) game.stats={};
-  game.stats.foundEffect=true;
+  if(e.id==="crit_rate") v=2+Math.floor(Math.random()*8);
+  G.foundEff=true;
   return {id:e.id,v:v};
 }
-function generatePlus(){
-  var min=getDropMinPlus(), max=getDropMaxPlus();
-  if(min>max) min=max;
-  return Math.min(max, Math.max(min, min+Math.floor(Math.pow(Math.random(),2.8)*(max-min+1))));
+function genPlus(){
+  var mn=dMin(),mx=dMax(); if(mn>mx) mn=mx;
+  return Math.min(mx,Math.max(mn,mn+Math.floor(Math.pow(Math.random(),2.8)*(mx-mn+1))));
 }
 
-function sanitize(){
-  if(!game||typeof game!=="object") game=clone(defaultData);
-  Object.keys(defaultData).forEach(function(k){ if(game[k]===undefined) game[k]=clone(defaultData[k]); });
-  if(!game.achievements) game.achievements={};
-  if(!game.stats) game.stats={foundEffect:false,kills:0};
-  if(!game.stageFloors) game.stageFloors={};
-  if(!Array.isArray(game.weaponsBag)) game.weaponsBag=[];
-  if(!Array.isArray(game.armorsBag)) game.armorsBag=[];
-  if(!Array.isArray(game.accessoriesBag)) game.accessoriesBag=[];
-  if(!game.build) game.build="none";
-  if(!game.pendingBuild) game.pendingBuild="none";
-}
-function loadGame(){
+function load(){
   try{
     var s=localStorage.getItem("legacy_idle_rpg_save");
-    if(s){ game=Object.assign(clone(defaultData), JSON.parse(s)); sanitize(); return true; }
-  }catch(e){}
-  game=clone(defaultData); sanitize(); return false;
+    if(s){ G=Object.assign(clone(defG),JSON.parse(s)); }
+  }catch(e){ G=clone(defG); }
+  if(!G.floors) G.floors={};
+  if(!G.ach) G.ach={};
+  if(!G.bagW) G.bagW=[]; if(!G.bagA) G.bagA=[]; if(!G.bagC) G.bagC=[];
+  if(!G.arts) G.arts={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0};
 }
-function saveGame(){ sanitize(); localStorage.setItem("legacy_idle_rpg_save", JSON.stringify(game)); }
+function save(){ try{ localStorage.setItem("legacy_idle_rpg_save",JSON.stringify(G)); }catch(e){} }
 
-window.switchTab=function(id){
-  document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active")});
-  document.querySelectorAll(".tab-content").forEach(function(c){c.classList.remove("active")});
-  var b=$("tab-btn-"+id), c=$("tab-"+id);
-  if(b) b.classList.add("active");
-  if(c) c.classList.add("active");
-  if(id==="achieve") renderAchievements();
-};
-window.setBuyAmount=function(a){ buyAmount=a; updateBuyBtns(); updateUI(); };
-function updateBuyBtns(){
-  ["1","10","100","max"].forEach(function(v){
-    var on=(buyAmount==v)||(v==="max"&&buyAmount==="max");
-    ["train-buy-"+v,"shop-buy-"+v].forEach(function(id){ var e=$(id); if(e) e.classList.toggle("active", on); });
-  });
-}
-
-function playerLoop(){
-  try{
-    if(isRespawning||checkDeath()) return;
-    if(game.enemyHp<=0) return;
-    var raw=getAtk();
-    var crit=Math.random()*100<getCritRate();
-    if(crit) raw=Math.floor(raw*getCritDmg());
-    var dmg=dmgDeal(raw);
-    game.enemyHp-=dmg;
-    spawnFloat((crit?"CRIT ":"")+"-"+dmg, crit?"crit":"dmg-e", "right");
-    var ls=getEquipEffect("lifesteal");
-    if(ls>0){
-      var heal=Math.floor(dmg*ls/100);
-      if(heal>0){ game.playerHp=Math.min(getMaxHp(),game.playerHp+heal); spawnFloat("+"+heal,"heal","left"); }
+function playerHit(){
+  if(repop||dead()) return;
+  if(E.hp<=0) return;
+  var raw=atk(), cr=Math.random()*100<critR();
+  if(cr) raw=Math.floor(raw*critD());
+  var dmg=deal(raw);
+  E.hp-=dmg;
+  floatT((cr?"CRIT ":"")+"-"+dmg, cr?"cr":"de","R");
+  var ls=eqE("lifesteal");
+  if(ls>0){ var h=Math.floor(dmg*ls/100); if(h>0){ G.hp=Math.min(maxHp(),G.hp+h); floatT("+"+h,"he","L"); } }
+  if(E.hp<=0){
+    var g=gold(); G.gold+=g; G.goldEarned+=g;
+    floatT("+"+g+"G","go","C"); log("⚔ +"+g+"G");
+    G.kills++;
+    if(!G.inf) drop();
+    if(G.inf){ G.infF++; if(G.infF>G.bestInf) G.bestInf=G.infF; }
+    else{
+      if(G.floor===100){
+        log("🎉 100Fクリア");
+        if(G.stage===G.maxU && G.maxU<10){
+          saveFloor(); G.maxU++; G.stage=G.maxU; G.floor=G.floors[String(G.stage)]||1;
+          log("➡ "+stage().name);
+          if(rebOK()) log("✨ 転生解放！");
+        } else G.floor=Math.min(100,G.floor+1);
+      } else G.floor++;
+      saveFloor();
     }
-    if(game.enemyHp<=0){
-      var g=getGold();
-      game.gold+=g; game.totalGoldEarned=(game.totalGoldEarned||0)+g;
-      spawnFloat("+"+g+"G","gold","center");
-      addLog("⚔ 撃破 +"+g+"G");
-      game.stats.kills=(game.stats.kills||0)+1;
-      if(!game.inInfinite) handleDrop();
-      if(game.inInfinite){
-        game.infiniteFloor++;
-        if(game.infiniteFloor>game.bestInfinite) game.bestInfinite=game.infiniteFloor;
-      }else{
-        if(game.stageMinor===100){
-          addLog("🎉 100階クリア");
-          if(game.currentStageId===game.maxUnlockedStageId && game.maxUnlockedStageId<10){
-            saveFloor();
-            game.maxUnlockedStageId++;
-            game.currentStageId=game.maxUnlockedStageId;
-            game.stageMinor=game.stageFloors[String(game.currentStageId)]||1;
-            addLog("➡ "+getActiveStage().name);
-            if(isRebirthUnlocked()) addLog("✨ 転生が解放されました！");
-          }else game.stageMinor=Math.min(100,game.stageMinor+1);
-        }else game.stageMinor++;
-        saveFloor();
-      }
-      isRespawning=true; game.enemyHp=0;
-      clearTimeout(respawnTimeout);
-      respawnTimeout=setTimeout(function(){ isRespawning=false; rollEnemy(); updateUI(); }, getRespawnDelay());
-      checkAchievements();
-    }
-    updateUI(); saveGame();
-  }catch(err){ console.error(err); }
-}
-function enemyLoop(){
-  if(isRespawning||game.playerHp<=0||game.enemyHp<=0) return;
-  var dmg=dmgTaken();
-  game.playerHp-=dmg;
-  spawnFloat("-"+dmg,"dmg-p","left");
-  if(game.build==="tank"){
-    var c=Math.floor(getDef()*0.15);
-    if(c>0&&game.enemyHp>0){ game.enemyHp-=c; spawnFloat("-"+c,"dmg-e","right"); }
+    repop=true; E.hp=0;
+    clearTimeout(tSpawn);
+    tSpawn=setTimeout(function(){ repop=false; rollEnemy(); ui(); }, resDelay());
+    checkAch();
   }
-  checkDeath(); updateUI(); saveGame();
+  ui(); save();
 }
-function checkDeath(){
-  if(game.playerHp>0) return false;
-  if(game.inInfinite){
-    addLog("☠ 無限回廊敗北 → 通常エリア");
-    clearTimeout(respawnTimeout); isRespawning=false; game.inInfinite=false;
-    game.playerHp=getMaxHp(); rollEnemy();
-    $("btn-leave-infinite").style.display="none";
-    startTimers(); updateUI(); saveGame(); return true;
+function enemyHit(){
+  if(repop||G.hp<=0||E.hp<=0) return;
+  var dmg=taken(); G.hp-=dmg; floatT("-"+dmg,"dp","L");
+  if(G.build==="tank"){ var c=Math.floor(def()*0.15); if(c>0&&E.hp>0){ E.hp-=c; floatT("-"+c,"de","R"); } }
+  dead(); ui(); save();
+}
+function dead(){
+  if(G.hp>0) return false;
+  if(G.inf){
+    log("☠ 無限敗北→通常");
+    clearTimeout(tSpawn); repop=false; G.inf=false; G.hp=maxHp(); rollEnemy();
+    var bl=$("btnLeaveInf"); if(bl) bl.style.display="none";
+    timers(); ui(); save(); return true;
   }
-  game.stageMinor=Math.max(1,game.stageMinor-10); saveFloor();
-  addLog("⬇ 敗北 -10F → "+game.stageMinor+"F");
-  game.playerHp=getMaxHp(); isRespawning=false;
-  clearTimeout(respawnTimeout); rollEnemy(); updateUI(); saveGame(); return true;
+  G.floor=Math.max(1,G.floor-10); saveFloor();
+  log("⬇ -10F → "+G.floor+"F");
+  G.hp=maxHp(); repop=false; clearTimeout(tSpawn); rollEnemy(); ui(); save(); return true;
 }
-function handleDrop(){
-  var chance=0.28*(game.build==="merchant"?1.5:1)*(1+getAchBonus("drop"));
-  if(Math.random()>chance) return;
+function drop(){
+  var ch=0.28*(G.build==="merchant"?1.5:1)*(1+achB("drop"));
+  if(Math.random()>ch) return;
   var r=Math.random(), type=r<0.4?"w":r<0.75?"a":"c";
-  var q=Math.min(4,Math.floor(Math.random()*3));
-  var plus=generatePlus(), eff=rollEffect();
-  if(Math.random()<(game.stageMinor===100?0.03:0.01)){
-    var st=getActiveStage();
-    game.artifacts[st.id]=(game.artifacts[st.id]||0)+1;
-    addLog("🕊 聖遺物 "+st.art);
+  var q=Math.min(4,Math.floor(Math.random()*3)), plus=genPlus(), eff=rollEff();
+  if(Math.random()<(G.floor===100?0.03:0.01)){
+    G.arts[stage().id]=(G.arts[stage().id]||0)+1;
+    log("🕊 "+stage().art);
   }
   if(type==="w"){
-    var name=wPool[q], stat=Math.floor((q+1)*6+game.currentStageId*3+plus*1.2);
-    var obj={name:name,plus:plus,stat:stat,value:Math.floor(stat*5),effect:eff};
-    if(game.shAutoEquip===1&&stat>game.wAtk){
-      var old={name:game.wName,plus:game.wPlus,stat:game.wAtk,value:Math.floor(game.wAtk*5),effect:game.wEffect};
-      game.wName=name; game.wPlus=plus; game.wAtk=stat; game.wEffect=eff;
-      if(old.stat>0) pushItem("w",old);
-    }else pushItem("w",obj);
-  }else if(type==="a"){
-    var name=aPool[q], stat=Math.floor((q+1)*3+game.currentStageId*2+plus*0.7);
-    var obj={name:name,plus:plus,stat:stat,value:Math.floor(stat*10),effect:eff};
-    if(game.shAutoEquip===1&&stat>game.aDef){
-      var old={name:game.aName,plus:game.aPlus,stat:game.aDef,value:Math.floor(game.aDef*10),effect:game.aEffect};
-      game.aName=name; game.aPlus=plus; game.aDef=stat; game.aEffect=eff;
-      if(old.stat>0) pushItem("a",old);
-    }else pushItem("a",obj);
-  }else{
-    var name=cPool[q], hp=Math.floor((q+1)*15+game.currentStageId*8+plus*0.9), regen=Math.floor((q+1)+game.currentStageId*0.5+plus*0.08);
-    var obj={name:name,plus:plus,hp:hp,regen:regen,value:Math.floor((hp+regen*5)*3),effect:eff};
-    if(game.shAutoEquip===1&&hp+regen*5>game.cHp+game.cRegen*5){
-      var old={name:game.cName,plus:game.cPlus,hp:game.cHp,regen:game.cRegen,value:Math.floor((game.cHp+game.cRegen*5)*3),effect:game.cEffect};
-      game.cName=name; game.cPlus=plus; game.cHp=hp; game.cRegen=regen; game.cEffect=eff;
-      if(old.hp>0||old.regen>0) pushItem("c",old);
-    }else pushItem("c",obj);
+    var n=WP[q], st=Math.floor((q+1)*6+G.stage*3+plus*1.2);
+    var o={name:n,plus:plus,stat:st,value:Math.floor(st*5),effect:eff};
+    if(G.shAE&&st>G.wAtk){
+      var old={name:G.wName,plus:G.wPlus,stat:G.wAtk,value:Math.floor(G.wAtk*5),effect:G.wEff};
+      G.wName=n;G.wPlus=plus;G.wAtk=st;G.wEff=eff; if(old.stat>0) push("w",old);
+    } else push("w",o);
+  } else if(type==="a"){
+    var n=AP[q], st=Math.floor((q+1)*3+G.stage*2+plus*0.7);
+    var o={name:n,plus:plus,stat:st,value:Math.floor(st*10),effect:eff};
+    if(G.shAE&&st>G.aDef){
+      var old={name:G.aName,plus:G.aPlus,stat:G.aDef,value:Math.floor(G.aDef*10),effect:G.aEff};
+      G.aName=n;G.aPlus=plus;G.aDef=st;G.aEff=eff; if(old.stat>0) push("a",old);
+    } else push("a",o);
+  } else {
+    var n=CP[q], hp=Math.floor((q+1)*15+G.stage*8+plus*0.9), rg=Math.floor((q+1)+G.stage*0.5+plus*0.08);
+    var o={name:n,plus:plus,hp:hp,regen:rg,value:Math.floor((hp+rg*5)*3),effect:eff};
+    if(G.shAE&&hp+rg*5>G.cHp+G.cReg*5){
+      var old={name:G.cName,plus:G.cPlus,hp:G.cHp,regen:G.cReg,value:Math.floor((G.cHp+G.cReg*5)*3),effect:G.cEff};
+      G.cName=n;G.cPlus=plus;G.cHp=hp;G.cReg=rg;G.cEff=eff; if(old.hp>0||old.regen>0) push("c",old);
+    } else push("c",o);
   }
-  if(eff) addLog("✨ 特殊効果 "+effectLabel(eff));
+  if(eff) log("✨ "+effLab(eff));
 }
-function pushItem(type,obj){
-  var max=getBagMax();
-  var bag=type==="w"?game.weaponsBag:type==="a"?game.armorsBag:game.accessoriesBag;
-  if(bag.length>=max) game.gold+=Math.floor(obj.value*(1+game.shAutoSell*0.05));
-  else bag.push(obj);
+function push(type,o){
+  var mx=bagMax(), bag=type==="w"?G.bagW:type==="a"?G.bagA:G.bagC;
+  if(bag.length>=mx) G.gold+=Math.floor(o.value*(1+G.shAS*0.05));
+  else bag.push(o);
 }
-function startTimers(){
-  if(playerInterval) clearInterval(playerInterval);
-  if(enemyInterval) clearInterval(enemyInterval);
-  playerInterval=setInterval(playerLoop, getAtkInterval());
-  enemyInterval=setInterval(enemyLoop, 1000);
-  if(enemyRegenInterval) clearInterval(enemyRegenInterval);
-  enemyRegenInterval=setInterval(function(){
-    if(isRespawning||game.enemyHp<=0) return;
-    if(enemy.regen>0&&game.enemyHp<enemy.maxHp){ game.enemyHp=Math.min(enemy.maxHp,game.enemyHp+enemy.regen); updateUI(); }
+function timers(){
+  if(tP) clearInterval(tP); if(tE) clearInterval(tE);
+  tP=setInterval(playerHit, atkInt());
+  tE=setInterval(enemyHit, 1000);
+  if(tER) clearInterval(tER);
+  tER=setInterval(function(){
+    if(repop||E.hp<=0) return;
+    if(E.reg>0&&E.hp<E.max){ E.hp=Math.min(E.max,E.hp+E.reg); ui(); }
   },1000);
 }
-function startRegen(){
-  if(regenInterval) clearInterval(regenInterval);
-  regenInterval=setInterval(function(){
-    var r=getRegenVal();
-    if(r>0&&game.playerHp>0&&game.playerHp<getMaxHp()){ game.playerHp=Math.min(getMaxHp(),game.playerHp+r); updateUI(); }
-  }, getRegenSpeed());
+function regen(){
+  if(tR) clearInterval(tR);
+  tR=setInterval(function(){
+    var r=reg();
+    if(r>0&&G.hp>0&&G.hp<maxHp()){ G.hp=Math.min(maxHp(),G.hp+r); ui(); }
+  }, regSpd());
 }
 
-window.train=function(t){
-  if(game.inInfinite) return;
-  var key={atk:"lvAtk",hp:"lvHp",def:"lvDef",regen:"lvRegen"}[t]; if(!key) return;
-  var lv=game[key], total=0, n=0, limit=buyAmount==="max"?99999:Number(buyAmount);
-  for(var i=0;i<limit;i++){ var c=getTrainCost(t,lv+i); if(total+c>game.gold) break; total+=c; n++; }
+function doTrain(type){
+  if(G.inf) return;
+  var key={atk:"lvAtk",hp:"lvHp",def:"lvDef",regen:"lvReg"}[type];
+  var lv0=G[key], total=0,n=0,lim=buyN==="max"?99999:+buyN;
+  for(var i=0;i<lim;i++){ var c=trainCost(type,lv0+i); if(total+c>G.gold) break; total+=c; n++; }
   if(n<=0) return;
-  game.gold-=total; game[key]+=n;
-  if(t==="hp") game.playerHp=getMaxHp();
-  updateUI(); saveGame();
-};
+  G.gold-=total; G[key]+=n;
+  if(type==="hp") G.hp=maxHp();
+  ui(); save();
+}
 function shopInfo(type){
-  var map={atk:[game.shAtk,1,1/0],def:[game.shDef,1,1/0],gold:[game.shGold,1,1/0],
-    spd:[game.shSpd,2,59],respawn:[game.shRespawn,3,59],crit_rate:[game.shCritRate,2,95],
-    crit_dmg:[game.shCritDmg,2,1/0],bag:[game.shBag,1,1/0],autosell:[game.shAutoSell,3,10],
-    regen:[game.shRegen,2,1/0],traincost:[game.shTrainCost,4,10],dropmax:[game.shDropMax,5,1/0],dropmin:[game.shDropMin,8,1/0]};
-  if(type==="autoequip") return {ok:game.shAutoEquip<1,cost:50,n:1};
-  var m=map[type]; if(!m) return null;
-  var cur=m[0], mul=m[1], max=m[2], rem=max-cur;
+  var map={atk:[G.shAtk,1,999],def:[G.shDef,1,999],gold:[G.shGold,1,999],spd:[G.shSpd,2,59],res:[G.shRes,3,59],
+    cr:[G.shCR,2,95],cd:[G.shCD,2,999],bag:[G.shBag,1,999],as:[G.shAS,3,10],reg:[G.shReg,2,999],
+    tc:[G.shTC,4,10],dmax:[G.shDMax,5,999],dmin:[G.shDMin,8,999]};
+  if(type==="ae") return {ok:G.shAE<1,cost:50,n:1};
+  var m=map[type]; if(!m) return {ok:false,cost:0,n:0};
+  var cur=m[0],mul=m[1],mx=m[2],rem=mx-cur;
   if(rem<=0) return {ok:false,cost:0,n:0};
-  var want=buyAmount==="max"?rem:Math.min(Number(buyAmount),rem), cost=0, n=0;
-  for(var i=1;i<=want;i++){ var nc=(cur+i)*mul; if(cost+nc>game.crystal) break; cost+=nc; n++; }
+  var want=buyN==="max"?rem:Math.min(+buyN,rem),cost=0,n=0;
+  for(var i=1;i<=want;i++){ var nc=(cur+i)*mul; if(cost+nc>G.crystal) break; cost+=nc; n++; }
   return {ok:n>0,cost:cost,n:n};
 }
-window.buyShop=function(type){
-  if(type==="autoequip"){ if(game.shAutoEquip<1&&game.crystal>=50){ game.crystal-=50; game.shAutoEquip=1; updateUI(); saveGame(); } return; }
-  var info=shopInfo(type); if(!info||!info.ok) return;
-  game.crystal-=info.cost;
-  var keys={atk:"shAtk",def:"shDef",gold:"shGold",spd:"shSpd",respawn:"shRespawn",crit_rate:"shCritRate",crit_dmg:"shCritDmg",bag:"shBag",autosell:"shAutoSell",regen:"shRegen",traincost:"shTrainCost",dropmax:"shDropMax",dropmin:"shDropMin"};
-  if(keys[type]) game[keys[type]]+=info.n;
-  if(type==="spd") startTimers();
-  updateUI(); saveGame();
-};
+function doShop(type){
+  if(type==="ae"){ if(G.shAE<1&&G.crystal>=50){ G.crystal-=50; G.shAE=1; ui(); save(); } return; }
+  var info=shopInfo(type); if(!info.ok) return;
+  G.crystal-=info.cost;
+  var k={atk:"shAtk",def:"shDef",gold:"shGold",spd:"shSpd",res:"shRes",cr:"shCR",cd:"shCD",bag:"shBag",as:"shAS",reg:"shReg",tc:"shTC",dmax:"shDMax",dmin:"shDMin"};
+  if(k[type]) G[k[type]]+=info.n;
+  if(type==="spd") timers();
+  ui(); save();
+}
 
-/* ===== 転生UI（中央モーダル + クリック選択確実） ===== */
-function renderBuildList(){
-  var box=$("build-list"); if(!box) return;
-  if(!game.pendingBuild) game.pendingBuild=game.build||"none";
+function openReb(){
+  if(G.inf){ log("無限中は不可"); return; }
+  if(!rebOK()){ log("エリア3踏破で解放"); return; }
+  var p=crystals();
+  if(p<=0){ log("結晶0（進行不足）"); return; }
+  G.pending=G.build||"none";
+  txt("rebPend",p);
+  txt("rebNext",(1+Math.log((G.rebirths||0)+2)).toFixed(2));
+  renderBuilds();
+  var ov=$("rebOv"); if(ov) ov.classList.add("show");
+}
+function closeReb(){ var ov=$("rebOv"); if(ov) ov.classList.remove("show"); }
+function renderBuilds(){
+  var box=$("buildList"); if(!box) return;
   var html="";
   Object.keys(BUILDS).forEach(function(k){
-    var b=BUILDS[k];
-    var sel=game.pendingBuild===k?" selected":"";
-    html+='<div class="build-card'+sel+'" data-build="'+k+'">'+
-      "<h5>"+b.name+(game.pendingBuild===k?" ✓":"")+"</h5>"+
-      "<p>"+b.desc+"</p></div>";
+    var b=BUILDS[k], sel=G.pending===k?" sel":"";
+    html+='<div class="bc'+sel+'" data-build="'+k+'"><h5>'+b.name+(G.pending===k?" ✓":"")+"</h5><p>"+b.desc+"</p></div>";
   });
   box.innerHTML=html;
 }
-
-window.openRebirthPanel=function(){
-  if(game.inInfinite){ addLog("無限回廊中は転生できません"); return; }
-  if(!isRebirthUnlocked()){ addLog("エリア3を踏破すると転生が解放されます"); return; }
-  var pending=calculateCrystals();
-  if(pending<=0){ addLog("獲得できる結晶がありません（もう少し進めましょう）"); return; }
-  game.pendingBuild=game.build||"none";
-  S("rebirth-pending", pending);
-  S("rebirth-next-mult", (1+Math.log((game.rebirths||0)+2)).toFixed(2));
-  renderBuildList();
-  $("rebirth-overlay").classList.add("show");
-};
-
-window.closeRebirthPanel=function(){
-  $("rebirth-overlay").classList.remove("show");
-};
-
-window.selectBuild=function(k){
-  if(!BUILDS[k]) return;
-  game.pendingBuild=k;
-  renderBuildList();
-};
-
-window.confirmRebirth=function(){
-  if(game.inInfinite||!isRebirthUnlocked()) return;
-  var earned=calculateCrystals();
-  if(earned<=0) return;
-  clearTimeout(respawnTimeout); isRespawning=false;
-  game.crystal+=earned;
-  game.rebirths++;
-  game.build=game.pendingBuild||"none";
-  game.gold=0; game.lvAtk=0; game.lvHp=0; game.lvDef=0; game.lvRegen=1;
-  game.currentStageId=1; game.stageMinor=1; game.stageFloors={};
-  game.playerHp=getMaxHp();
-  rollEnemy();
-  window.closeRebirthPanel();
+function pickBuild(k){ if(!BUILDS[k]) return; G.pending=k; renderBuilds(); }
+function confirmReb(){
+  if(G.inf||!rebOK()) return;
+  var earned=crystals(); if(earned<=0) return;
+  clearTimeout(tSpawn); repop=false;
+  G.crystal+=earned; G.rebirths++;
+  G.build=G.pending||"none";
+  G.gold=0; G.lvAtk=0; G.lvHp=0; G.lvDef=0; G.lvReg=1;
+  G.stage=1; G.floor=1; G.floors={};
+  G.hp=maxHp(); rollEnemy();
+  closeReb();
   $("log").innerHTML="";
-  addLog("🔄 転生 +"+earned+"💎 / ビルド: "+BUILDS[game.build].name+" / ×"+getMult().toFixed(2));
-  checkAchievements();
-  startTimers(); startRegen(); updateUI(); saveGame();
-};
+  log("🔄 転生 +"+earned+" / "+BUILDS[G.build].name+" / ×"+mult().toFixed(2));
+  checkAch(); timers(); regen(); ui(); save();
+}
 
-/* ビルドカードクリック（イベント委譲・確実に動く） */
-document.addEventListener("click", function(ev){
-  var card=ev.target.closest(".build-card");
-  if(!card) return;
-  var k=card.getAttribute("data-build");
-  if(k) window.selectBuild(k);
-});
-/* オーバーレイ背景クリックで閉じる */
-$("rebirth-overlay").addEventListener("click", function(ev){
-  if(ev.target.id==="rebirth-overlay") window.closeRebirthPanel();
-});
+function changeStage(id){
+  if(G.inf) return;
+  clearTimeout(tSpawn); repop=false; saveFloor();
+  G.stage=id; G.floor=G.floors[String(id)]||1;
+  rollEnemy(); G.hp=Math.min(G.hp,maxHp());
+  log("🗺 "+stage().name+" "+G.floor+"F"); ui(); save();
+}
+function enterInf(){
+  if(G.inf) return;
+  clearTimeout(tSpawn); repop=false; saveFloor();
+  G.inf=true; G.infF=1; G.hp=maxHp(); rollEnemy();
+  log("🌀 無限回廊"); $("btnLeaveInf").style.display="block";
+  timers(); ui(); save();
+}
+function leaveInf(){
+  if(!G.inf) return;
+  clearTimeout(tSpawn); repop=false; G.inf=false; G.hp=maxHp(); rollEnemy();
+  log("離脱"); $("btnLeaveInf").style.display="none"; timers(); ui(); save();
+}
 
-window.changeStage=function(id){
-  if(game.inInfinite) return;
-  clearTimeout(respawnTimeout); isRespawning=false;
-  saveFloor();
-  game.currentStageId=id;
-  game.stageMinor=game.stageFloors[String(id)]||1;
-  rollEnemy();
-  game.playerHp=Math.min(game.playerHp,getMaxHp());
-  addLog("🗺 "+getActiveStage().name+" "+game.stageMinor+"F");
-  updateUI(); saveGame();
-};
-window.enterInfinite=function(){
-  if(game.inInfinite) return;
-  clearTimeout(respawnTimeout); isRespawning=false;
-  saveFloor();
-  game.inInfinite=true; game.infiniteFloor=1;
-  game.playerHp=getMaxHp(); rollEnemy();
-  addLog("🌀 無限回廊");
-  $("btn-leave-infinite").style.display="block";
-  startTimers(); updateUI(); saveGame();
-};
-window.leaveInfinite=function(){
-  if(!game.inInfinite) return;
-  clearTimeout(respawnTimeout); isRespawning=false;
-  game.inInfinite=false;
-  game.playerHp=getMaxHp(); rollEnemy();
-  addLog("無限回廊離脱");
-  $("btn-leave-infinite").style.display="none";
-  startTimers(); updateUI(); saveGame();
-};
-
-window.equipWeapon=function(i){
-  if(i<0||i>=game.weaponsBag.length) return;
-  var old={name:game.wName,plus:game.wPlus,stat:game.wAtk,value:Math.floor(game.wAtk*5),effect:game.wEffect};
-  var n=game.weaponsBag[i];
-  game.wName=n.name; game.wPlus=n.plus; game.wAtk=n.stat; game.wEffect=n.effect||null;
-  game.weaponsBag.splice(i,1); if(old.stat>0) pushItem("w",old); updateUI(); saveGame();
-};
-window.sellWeapon=function(i){ if(i<0||i>=game.weaponsBag.length)return; game.gold+=game.weaponsBag[i].value; game.weaponsBag.splice(i,1); updateUI(); saveGame(); };
-window.equipArmor=function(i){
-  if(i<0||i>=game.armorsBag.length) return;
-  var old={name:game.aName,plus:game.aPlus,stat:game.aDef,value:Math.floor(game.aDef*10),effect:game.aEffect};
-  var n=game.armorsBag[i];
-  game.aName=n.name; game.aPlus=n.plus; game.aDef=n.stat; game.aEffect=n.effect||null;
-  game.armorsBag.splice(i,1); if(old.stat>0) pushItem("a",old); updateUI(); saveGame();
-};
-window.sellArmor=function(i){ if(i<0||i>=game.armorsBag.length)return; game.gold+=game.armorsBag[i].value; game.armorsBag.splice(i,1); updateUI(); saveGame(); };
-window.equipAccessory=function(i){
-  if(i<0||i>=game.accessoriesBag.length) return;
-  var old={name:game.cName,plus:game.cPlus,hp:game.cHp,regen:game.cRegen,value:Math.floor((game.cHp+game.cRegen*5)*3),effect:game.cEffect};
-  var n=game.accessoriesBag[i];
-  game.cName=n.name; game.cPlus=n.plus; game.cHp=n.hp; game.cRegen=n.regen; game.cEffect=n.effect||null;
-  game.accessoriesBag.splice(i,1); if(old.hp>0||old.regen>0) pushItem("c",old);
-  game.playerHp=Math.min(game.playerHp,getMaxHp()); updateUI(); saveGame();
-};
-window.sellAccessory=function(i){ if(i<0||i>=game.accessoriesBag.length)return; game.gold+=game.accessoriesBag[i].value; game.accessoriesBag.splice(i,1); updateUI(); saveGame(); };
-window.equipBestAll=function(){
-  if(game.weaponsBag.length){ game.weaponsBag.sort(function(a,b){return b.stat-a.stat}); if(game.weaponsBag[0].stat>game.wAtk) window.equipWeapon(0); }
-  if(game.armorsBag.length){ game.armorsBag.sort(function(a,b){return b.stat-a.stat}); if(game.armorsBag[0].stat>game.aDef) window.equipArmor(0); }
-  if(game.accessoriesBag.length){
-    game.accessoriesBag.sort(function(a,b){return (b.hp+b.regen*5)-(a.hp+a.regen*5)});
-    if(game.accessoriesBag[0].hp+game.accessoriesBag[0].regen*5>game.cHp+game.cRegen*5) window.equipAccessory(0);
+function ui(){
+  var p=power(); txt("pow",p.toLocaleString()); if(p>G.bestPow) G.bestPow=p;
+  txt("bpow",G.bestPow.toLocaleString()); txt("binf",G.bestInf);
+  txt("gold",G.gold.toLocaleString()); txt("crystal",G.crystal); txt("shopCry",G.crystal);
+  txt("atk",atk()); txt("def",def()); txt("reg",reg());
+  txt("cr",critR()); txt("cd",Math.round(critD()*100));
+  txt("reb",G.rebirths); txt("mult",mult().toFixed(2));
+  txt("bname",(BUILDS[G.build]||BUILDS.none).name);
+  txt("spd",(1000/atkInt()).toFixed(1)); txt("rsp",(regSpd()/1000).toFixed(2));
+  txt("phpT",Math.floor(G.hp)); txt("phpM",maxHp());
+  var pb=$("php"); if(pb) pb.style.width=Math.max(0,G.hp/maxHp()*100)+"%";
+  var eb=$("ehp"); if(eb) eb.style.width=repop?"0%":Math.max(0,E.hp/E.max*100)+"%";
+  $("repop").style.display=repop?"inline":"none";
+  txt("eAtk",E.atk); txt("eDef",E.def); txt("eReg",E.reg);
+  if(G.inf){ txt("stageTitle","🌀 無限 ("+G.infF+"F)"); txt("enName",repop?"リポップ":"守護者"); }
+  else {
+    txt("stageTitle",stage().name+" ("+G.floor+"階)");
+    txt("enName", repop?"リポップ": (G.floor===100?"【ボス】":"")+EN[(G.floor-1)%9]);
   }
-  updateUI();
-};
-window.sellAllInventory=function(){
-  var g=0;
-  game.weaponsBag.forEach(function(i){g+=i.value});
-  game.armorsBag.forEach(function(i){g+=i.value});
-  game.accessoriesBag.forEach(function(i){g+=i.value});
-  game.gold+=g; game.weaponsBag=[]; game.armorsBag=[]; game.accessoriesBag=[]; updateUI(); saveGame();
-};
-window.toggleArtSummary=function(){
-  artSummaryOpen=!artSummaryOpen;
-  var el=$("art-summary"); if(!el) return;
-  if(!artSummaryOpen){ el.style.display="none"; return; }
-  el.style.display="block";
-  function p(v){return (v*100).toFixed(1)+"%"}
-  el.innerHTML="攻撃+"+p(getArtBonus("atk"))+" 防御+"+p(getArtBonus("def"))+" G+"+p(getArtBonus("gold"))+" 結晶+"+p(getArtBonus("crystal_up"));
-};
+  txt("ehpT",repop?0:Math.floor(E.hp)); txt("ehpM",E.max);
 
-function renderStages(){
-  var box=$("stage-selector"); if(!box) return;
-  var html="";
-  STAGES.forEach(function(st){
-    var locked=st.id>game.maxUnlockedStageId;
-    var fl=game.stageFloors[String(st.id)]||1;
-    var act=!game.inInfinite&&game.currentStageId===st.id?"active":"";
-    html+='<button class="'+act+'" '+(locked?"disabled":"")+' onclick="window.changeStage('+st.id+')">'+st.id+". "+st.name+(locked?" 🔒":" ("+fl+"F)")+"</button>";
-  });
-  box.innerHTML=html;
-}
-function renderArts(){
-  var box=$("artifact-list"); if(!box) return;
-  var html="";
-  STAGES.forEach(function(st){
-    var c=game.artifacts[st.id]||0;
-    if(c>0) html+="<div>🕊 "+st.art+" x"+c+" — "+st.desc+"</div>";
-  });
-  box.innerHTML=html||"未所持";
-}
-function renderInv(){
-  var bm=getBagMax();
-  function rows(list,lab,eq,sell){
-    if(!list.length) return "なし";
-    return list.map(function(it,i){
-      var tag=it.effect?'<span class="effect-tag">'+effectLabel(it.effect)+"</span>":"";
-      return '<div class="item-row"><div>'+it.name+" +"+it.plus+" ("+lab(it)+")"+tag+'</div><div><button onclick="window.'+eq+"("+i+')">装備</button> <button class="btn-danger" onclick="window.'+sell+"("+i+')">売</button></div></div>";
+  function setEff(id,e){ var el=$(id); if(!el) return; if(e){ el.style.display="inline"; el.textContent=effLab(e);} else el.style.display="none"; }
+  if(G.wAtk>0){ txt("wN",G.wName+" +"+G.wPlus); txt("wS","("+G.wAtk+")"); } else { txt("wN","なし"); txt("wS",""); }
+  if(G.aDef>0){ txt("aN",G.aName+" +"+G.aPlus); txt("aS","("+G.aDef+")"); } else { txt("aN","なし"); txt("aS",""); }
+  if(G.cHp||G.cReg){ txt("cN",G.cName+" +"+G.cPlus); txt("cS","(HP"+G.cHp+"/回"+G.cReg+")"); } else { txt("cN","なし"); txt("cS",""); }
+  setEff("wE",G.wEff); setEff("aE",G.aEff); setEff("cE",G.cEff);
+  txt("lvAtk",G.lvAtk); txt("lvHp",G.lvHp); txt("lvDef",G.lvDef); txt("lvReg",G.lvReg);
+
+  function tp(type,id){
+    var key={atk:"lvAtk",hp:"lvHp",def:"lvDef",regen:"lvReg"}[type];
+    var lv0=G[key], lim=buyN==="max"?99999:+buyN, total=0,n=0;
+    for(var i=0;i<lim;i++){ var c=trainCost(type,lv0+i); if(total+c>G.gold) break; total+=c; n++; }
+    txt(id, n>0?total:trainCost(type,lv0));
+  }
+  tp("atk","pAtk"); tp("hp","pHp"); tp("def","pDef"); tp("regen","pReg");
+
+  // shop rows
+  var shop=$("shopRows");
+  if(shop){
+    var items=[
+      ["atk","ATK+20% Lv"+G.shAtk],["def","DEF+20% Lv"+G.shDef],["gold","G+25% Lv"+G.shGold],
+      ["spd","攻撃間隔 Lv"+G.shSpd+"/59"],["res","リポップ Lv"+G.shRes+"/59"],
+      ["cr","クリ率 Lv"+G.shCR+"/95"],["cd","クリ倍 Lv"+G.shCD],["bag","バッグ Lv"+G.shBag],
+      ["as","溢れ売却 Lv"+G.shAS+"/10"],["ae","自動換装 "+(G.shAE?"ON":"OFF")],
+      ["reg","回復+20% Lv"+G.shReg],["tc","訓練費軽減 Lv"+G.shTC+"/10"],
+      ["dmax","＋値上限 "+dMax()],["dmin","＋値下限 "+dMin()]
+    ];
+    shop.innerHTML=items.map(function(it){
+      var info=shopInfo(it[0]);
+      var price=it[0]==="ae"?50:(info.n>0?info.cost:((({atk:G.shAtk,def:G.shDef,gold:G.shGold,spd:G.shSpd,res:G.shRes,cr:G.shCR,cd:G.shCD,bag:G.shBag,as:G.shAS,reg:G.shReg,tc:G.shTC,dmax:G.shDMax,dmin:G.shDMin}[it[0]]||0)+1)*({spd:2,res:3,cr:2,cd:2,as:3,tc:4,dmax:5,dmin:8}[it[0]]||1)));
+      var dis=(it[0]==="spd"&&G.shSpd>=59)||(it[0]==="res"&&G.shRes>=59)||(it[0]==="cr"&&G.shCR>=95)||(it[0]==="as"&&G.shAS>=10)||(it[0]==="ae"&&G.shAE)||(it[0]==="tc"&&G.shTC>=10);
+      return '<div class="row"><span>'+it[1]+'</span><button type="button" data-shop="'+it[0]+'" '+(dis?"disabled":"")+">"+price+"💎</button></div>";
     }).join("");
   }
-  $("inv-weapons").innerHTML=rows(game.weaponsBag,function(i){return i.stat+"ATK"},"equipWeapon","sellWeapon");
-  $("inv-armors").innerHTML=rows(game.armorsBag,function(i){return i.stat+"DEF"},"equipArmor","sellArmor");
-  $("inv-accessories").innerHTML=rows(game.accessoriesBag,function(i){return "HP"+i.hp+"/回"+i.regen},"equipAccessory","sellAccessory");
-  S("bag-w",game.weaponsBag.length); S("bag-a",game.armorsBag.length); S("bag-c",game.accessoriesBag.length);
-  S("bag-max-w",bm); S("bag-max-a",bm); S("bag-max-c",bm);
-}
-function renderAchievements(){
-  var box=$("achieve-list"); if(!box) return;
-  box.innerHTML=ACHIEVEMENTS.map(function(a){
-    var done=!!game.achievements[a.id];
-    return '<div class="ach-item'+(done?" done":"")+'">'+(done?"✅ ":"🔒 ")+a.name+'<div class="reward">'+a.text+"</div></div>";
-  }).join("");
+
+  var pend=rebOK()?crystals():0;
+  txt("shopPend",pend);
+  var btn=$("btnReb");
+  if(btn){
+    if(G.inf){ btn.disabled=true; btn.textContent="無限中は不可"; }
+    else if(!rebOK()){ btn.disabled=true; btn.textContent="エリア3踏破で解放"; }
+    else if(pend<=0){ btn.disabled=true; btn.textContent="転生可能（結晶0）"; }
+    else { btn.disabled=false; btn.textContent="次元転生 (+"+pend+"💎)"; }
+  }
+
+  var f=Math.max(1,60-G.shSpd); if(G.build==="tank") f=Math.floor(f*2);
+  txt("spdInd", f<=1?"最速":(60/f).toFixed(1)+"/s");
+
+  // stages
+  var sl=$("stageList");
+  if(sl){
+    sl.innerHTML=STAGES.map(function(st){
+      var lock=st.id>G.maxU, fl=G.floors[String(st.id)]||1, on=!G.inf&&G.stage===st.id;
+      return '<button type="button" data-stage="'+st.id+'" '+(lock?"disabled":"")+' style="display:block;width:100%;text-align:left;margin:3px 0;background:'+(on?"#ffd700":"#2a2a2a")+';color:'+(on?"#000":"#ccc")+'">'+st.id+". "+st.name+(lock?" 🔒":" ("+fl+"F)")+"</button>";
+    }).join("");
+  }
+  // arts
+  var al=$("artList"), ah="";
+  STAGES.forEach(function(st){ var c=G.arts[st.id]||0; if(c>0) ah+="<div>🕊 "+st.art+" x"+c+" — "+st.d+"</div>"; });
+  if(al) al.innerHTML=ah||"未所持";
+  // inv
+  function inv(list,lab,eq,sell){
+    if(!list.length) return "なし";
+    return list.map(function(it,i){
+      var tag=it.effect?'<span class="tag">'+effLab(it.effect)+"</span>":"";
+      return '<div class="row"><span>'+it.name+" +"+it.plus+" ("+lab(it)+")"+tag+'</span><span><button type="button" data-eq="'+eq+'" data-i="'+i+'">装備</button> <button type="button" class="bd" data-sell="'+sell+'" data-i="'+i+'">売</button></span></div>';
+    }).join("");
+  }
+  var bm=bagMax();
+  txt("bw",G.bagW.length); txt("ba",G.bagA.length); txt("bc",G.bagC.length);
+  txt("bmw",bm); txt("bma",bm); txt("bmc",bm);
+  $("invW").innerHTML=inv(G.bagW,function(i){return i.stat+"ATK"},"w","w");
+  $("invA").innerHTML=inv(G.bagA,function(i){return i.stat+"DEF"},"a","a");
+  $("invC").innerHTML=inv(G.bagC,function(i){return "HP"+i.hp}, "c","c");
+  // ach
+  var ac=$("achList");
+  if(ac) ac.innerHTML=ACH.map(function(a){ return "<div style='padding:4px 0;border-bottom:1px solid #333;font-size:12px;"+(G.ach[a.id]?"color:#ffd700":"")+"'>"+(G.ach[a.id]?"✅ ":"🔒 ")+a.name+" <span style='color:#81c784'>"+a.t+"</span></div>"; }).join("");
+
+  $("btnLeaveInf").style.display=G.inf?"block":"none";
 }
 
-window.exportSave=function(){
-  saveGame();
-  var a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(game,null,2)],{type:"application/json"}));
-  a.download="legacy_idle_rpg_save.json"; a.click();
-};
-window.importSave=function(ev){
+/* ===== イベント（全部委譲・確実に動く） ===== */
+document.addEventListener("click", function(ev){
+  var t=ev.target.closest("button, .bc");
+  if(!t) {
+    if(ev.target.id==="rebOv") closeReb();
+    return;
+  }
+  // tabs
+  if(t.getAttribute("data-tab")){
+    var id=t.getAttribute("data-tab");
+    document.querySelectorAll("#tabs button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-tab")===id);});
+    ["train","bag","art","shop","stage","ach"].forEach(function(x){
+      var el=$("tab-"+x); if(el) el.classList.toggle("on", x===id);
+    });
+    return;
+  }
+  if(t.getAttribute("data-n")!=null){
+    buyN=t.getAttribute("data-n");
+    t.parentNode.querySelectorAll("button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-n")===String(buyN));});
+    ui(); return;
+  }
+  if(t.getAttribute("data-train")){ doTrain(t.getAttribute("data-train")); return; }
+  if(t.getAttribute("data-shop")){ doShop(t.getAttribute("data-shop")); return; }
+  if(t.getAttribute("data-stage")){ changeStage(+t.getAttribute("data-stage")); return; }
+  if(t.getAttribute("data-build")){ pickBuild(t.getAttribute("data-build")); return; }
+  if(t.getAttribute("data-eq")){
+    var kind=t.getAttribute("data-eq"), i=+t.getAttribute("data-i");
+    if(kind==="w"&&G.bagW[i]){
+      var old={name:G.wName,plus:G.wPlus,stat:G.wAtk,value:Math.floor(G.wAtk*5),effect:G.wEff};
+      var n=G.bagW[i]; G.wName=n.name;G.wPlus=n.plus;G.wAtk=n.stat;G.wEff=n.effect||null; G.bagW.splice(i,1);
+      if(old.stat>0) push("w",old); ui(); save();
+    }
+    if(kind==="a"&&G.bagA[i]){
+      var old={name:G.aName,plus:G.aPlus,stat:G.aDef,value:Math.floor(G.aDef*10),effect:G.aEff};
+      var n=G.bagA[i]; G.aName=n.name;G.aPlus=n.plus;G.aDef=n.stat;G.aEff=n.effect||null; G.bagA.splice(i,1);
+      if(old.stat>0) push("a",old); ui(); save();
+    }
+    if(kind==="c"&&G.bagC[i]){
+      var old={name:G.cName,plus:G.cPlus,hp:G.cHp,regen:G.cReg,value:Math.floor((G.cHp+G.cReg*5)*3),effect:G.cEff};
+      var n=G.bagC[i]; G.cName=n.name;G.cPlus=n.plus;G.cHp=n.hp;G.cReg=n.regen;G.cEff=n.effect||null; G.bagC.splice(i,1);
+      if(old.hp>0||old.regen>0) push("c",old); G.hp=Math.min(G.hp,maxHp()); ui(); save();
+    }
+    return;
+  }
+  if(t.getAttribute("data-sell")){
+    var kind=t.getAttribute("data-sell"), i=+t.getAttribute("data-i");
+    if(kind==="w"&&G.bagW[i]){ G.gold+=G.bagW[i].value; G.bagW.splice(i,1); }
+    if(kind==="a"&&G.bagA[i]){ G.gold+=G.bagA[i].value; G.bagA.splice(i,1); }
+    if(kind==="c"&&G.bagC[i]){ G.gold+=G.bagC[i].value; G.bagC.splice(i,1); }
+    ui(); save(); return;
+  }
+  if(t.id==="btnReb"){ openReb(); return; }
+  if(t.id==="btnConfirmReb"){ confirmReb(); return; }
+  if(t.id==="btnCancelReb"){ closeReb(); return; }
+  if(t.id==="btnInf"){ enterInf(); return; }
+  if(t.id==="btnLeaveInf"){ leaveInf(); return; }
+  if(t.id==="btnBest"){
+    if(G.bagW.length){ G.bagW.sort(function(a,b){return b.stat-a.stat}); if(G.bagW[0].stat>G.wAtk){ var btn=document.querySelector('[data-eq="w"][data-i="0"]'); if(btn) btn.click(); else { /* manual */ var n=G.bagW[0]; var old={name:G.wName,plus:G.wPlus,stat:G.wAtk,value:Math.floor(G.wAtk*5),effect:G.wEff}; G.wName=n.name;G.wPlus=n.plus;G.wAtk=n.stat;G.wEff=n.effect; G.bagW.splice(0,1); if(old.stat>0) push("w",old);} } }
+    if(G.bagA.length){ G.bagA.sort(function(a,b){return b.stat-a.stat}); if(G.bagA[0].stat>G.aDef){ var n=G.bagA[0]; var old={name:G.aName,plus:G.aPlus,stat:G.aDef,value:Math.floor(G.aDef*10),effect:G.aEff}; G.aName=n.name;G.aPlus=n.plus;G.aDef=n.stat;G.aEff=n.effect; G.bagA.splice(0,1); if(old.stat>0) push("a",old); } }
+    if(G.bagC.length){ G.bagC.sort(function(a,b){return (b.hp+b.regen*5)-(a.hp+a.regen*5)}); if(G.bagC[0].hp+G.bagC[0].regen*5>G.cHp+G.cReg*5){ var n=G.bagC[0]; var old={name:G.cName,plus:G.cPlus,hp:G.cHp,regen:G.cReg,value:0,effect:G.cEff}; G.cName=n.name;G.cPlus=n.plus;G.cHp=n.hp;G.cReg=n.regen;G.cEff=n.effect; G.bagC.splice(0,1); if(old.hp||old.regen) push("c",old); } }
+    ui(); save(); return;
+  }
+  if(t.id==="btnSellAll"){
+    var g=0; G.bagW.forEach(function(i){g+=i.value}); G.bagA.forEach(function(i){g+=i.value}); G.bagC.forEach(function(i){g+=i.value});
+    G.gold+=g; G.bagW=[]; G.bagA=[]; G.bagC=[]; ui(); save(); return;
+  }
+  if(t.id==="btnArtSum"){
+    var el=$("artSum"); if(!el) return;
+    if(el.style.display==="block"){ el.style.display="none"; return; }
+    el.style.display="block";
+    el.textContent="ATK+"+(artB("atk")*100).toFixed(0)+"% DEF+"+(artB("def")*100).toFixed(0)+"% G+"+(artB("gold")*100).toFixed(0)+"%";
+    return;
+  }
+  if(t.id==="btnExp"){
+    save();
+    var a=document.createElement("a");
+    a.href=URL.createObjectURL(new Blob([JSON.stringify(G,null,2)],{type:"application/json"}));
+    a.download="save.json"; a.click(); return;
+  }
+  if(t.id==="btnImp"){ $("impFile").click(); return; }
+  if(t.id==="btnReset"){
+    if(!confirm("削除？")) return;
+    clearTimeout(tSpawn); repop=false;
+    localStorage.removeItem("legacy_idle_rpg_save");
+    G=clone(defG); $("log").innerHTML=""; log("クリア");
+    rollEnemy(); timers(); regen(); ui(); return;
+  }
+});
+
+$("impFile").addEventListener("change", function(ev){
   var f=ev.target.files[0]; if(!f) return;
   var r=new FileReader();
   r.onload=function(e){
     try{
       if(!confirm("上書き？")) return;
-      clearTimeout(respawnTimeout); isRespawning=false;
-      game=Object.assign(clone(defaultData), JSON.parse(e.target.result));
-      sanitize(); saveGame(); rollEnemy(); startTimers(); startRegen(); updateUI();
+      clearTimeout(tSpawn); repop=false;
+      G=Object.assign(clone(defG),JSON.parse(e.target.result));
+      rollEnemy(); timers(); regen(); ui(); save(); log("読込完了");
     }catch(err){ alert("失敗"); }
   };
   r.readAsText(f); ev.target.value="";
-};
-window.resetGame=function(){
-  if(!confirm("削除しますか？")) return;
-  clearTimeout(respawnTimeout); isRespawning=false;
-  localStorage.removeItem("legacy_idle_rpg_save");
-  game=clone(defaultData);
-  $("log").innerHTML=""; addLog("クリア");
-  rollEnemy(); startTimers(); startRegen(); updateUI();
-};
+});
 
-function updateRebirthButton(){
-  var btn=$("btn-rebirth"); if(!btn) return;
-  if(game.inInfinite){
-    btn.disabled=true;
-    btn.innerText="無限回廊中は不可";
-    return;
-  }
-  if(!isRebirthUnlocked()){
-    btn.disabled=true;
-    btn.innerText="エリア3踏破で解放";
-    return;
-  }
-  var pending=calculateCrystals();
-  if(pending<=0){
-    btn.disabled=true;
-    btn.innerText="転生可能（結晶0・進行不足）";
-    return;
-  }
-  btn.disabled=false;
-  btn.innerText="次元転生 (+"+pending+"💎)";
-}
-
-function updateUI(){
-  var power=getTotalPower();
-  S("total-power", power.toLocaleString());
-  if(power>game.bestPower) game.bestPower=power;
-  S("best-power", game.bestPower.toLocaleString());
-  S("best-infinite", game.bestInfinite||0);
-  S("gold", game.gold.toLocaleString());
-  S("crystal", game.crystal.toLocaleString());
-  S("shop-crystal-display", game.crystal.toLocaleString());
-  S("total-atk", getAtk().toLocaleString());
-  S("total-def", getDef().toLocaleString());
-  S("total-regen", getRegenVal().toLocaleString());
-  S("regen-speed", (getRegenSpeed()/1000).toFixed(2));
-  S("atk-speed", (1000/getAtkInterval()).toFixed(1));
-  S("stat-crit-rate", getCritRate());
-  S("stat-crit-dmg", Math.round(getCritDmg()*100));
-  S("rebirth-count", game.rebirths);
-  S("buff-mult", getMult().toFixed(2));
-  S("build-name", (BUILDS[game.build]||BUILDS.none).name);
-  S("player-hp", Math.floor(game.playerHp));
-  S("player-max-hp", getMaxHp());
-  var pb=$("player-hp-bar"); if(pb) pb.style.width=Math.max(0,game.playerHp/getMaxHp()*100)+"%";
-  var eb=$("enemy-hp-bar"); if(eb) eb.style.width=isRespawning?"0%":Math.max(0,game.enemyHp/enemy.maxHp*100)+"%";
-  $("respawn-display").style.display=isRespawning?"inline":"none";
-  S("e-atk", enemy.atk); S("e-def", enemy.def); S("e-regen", enemy.regen);
-
-  if(game.inInfinite){
-    S("stage-display-full", "🌀 無限回廊 ("+game.infiniteFloor+"F)");
-    S("enemy-name", isRespawning?"リポップ中":"無限の守護者");
-  }else{
-    S("stage-display-full", getActiveStage().name+" ("+game.stageMinor+"階)");
-    if(isRespawning) S("enemy-name","リポップ中");
-    else if(game.stageMinor===100) S("enemy-name","【ボス】"+(game.currentStageId===10?"マモン":enemies[(game.currentStageId-1)%9]));
-    else S("enemy-name", enemies[(game.stageMinor-1)%9]);
-  }
-  S("enemy-hp", isRespawning?0:Math.floor(game.enemyHp));
-  S("enemy-max-hp", Math.floor(enemy.maxHp));
-
-  function setEff(id,eff){
-    var e=$(id); if(!e) return;
-    if(eff){ e.style.display="inline-block"; e.innerText=effectLabel(eff); } else e.style.display="none";
-  }
-  if(game.wAtk>0){ S("w-name", game.wName+" +"+game.wPlus); S("w-atk","(+ "+game.wAtk+")"); }
-  else{ S("w-name","なし"); S("w-atk",""); }
-  if(game.aDef>0){ S("a-name", game.aName+" +"+game.aPlus); S("a-def","(+ "+game.aDef+")"); }
-  else{ S("a-name","なし"); S("a-def",""); }
-  if(game.cHp>0||game.cRegen>0){ S("c-name", game.cName+" +"+game.cPlus); S("c-stat","(HP"+game.cHp+"/回"+game.cRegen+")"); }
-  else{ S("c-name","なし"); S("c-stat",""); }
-  setEff("w-eff", game.wEffect); setEff("a-eff", game.aEffect); setEff("c-eff", game.cEffect);
-
-  S("lv-atk", game.lvAtk); S("lv-hp", game.lvHp); S("lv-def", game.lvDef); S("lv-regen", game.lvRegen);
-  function trainPrice(type,id){
-    var lv=game[{atk:"lvAtk",hp:"lvHp",def:"lvDef",regen:"lvRegen"}[type]];
-    var limit=buyAmount==="max"?99999:Number(buyAmount), total=0, n=0;
-    for(var i=0;i<limit;i++){ var c=getTrainCost(type,lv+i); if(total+c>game.gold) break; total+=c; n++; }
-    S(id, (n>0?total:getTrainCost(type,lv)).toLocaleString());
-  }
-  trainPrice("atk","price-train-atk"); trainPrice("hp","price-train-hp");
-  trainPrice("def","price-train-def"); trainPrice("regen","price-train-regen");
-
-  function sp(type,id){
-    var info=shopInfo(type);
-    if(info&&info.n>0) S(id, info.cost.toLocaleString());
-    else{
-      var map={atk:[game.shAtk,1],def:[game.shDef,1],gold:[game.shGold,1],spd:[game.shSpd,2],respawn:[game.shRespawn,3],crit_rate:[game.shCritRate,2],crit_dmg:[game.shCritDmg,2],bag:[game.shBag,1],autosell:[game.shAutoSell,3],regen:[game.shRegen,2],traincost:[game.shTrainCost,4],dropmax:[game.shDropMax,5],dropmin:[game.shDropMin,8]};
-      var m=map[type]; S(id, m?((m[0]+1)*m[1]):"-");
-    }
-  }
-  ["atk","def","gold","spd","respawn","crit_rate","crit_dmg","bag","autosell","regen","traincost","dropmax","dropmin"].forEach(function(t){sp(t,"price-sh-"+t)});
-  S("shop-atk-lv",game.shAtk); S("shop-def-lv",game.shDef); S("shop-gold-lv",game.shGold);
-  S("shop-spd-lv",game.shSpd); S("shop-respawn-lv",game.shRespawn);
-  S("shop-crit-rate-lv",game.shCritRate); S("shop-crit-dmg-lv",game.shCritDmg);
-  S("shop-bag-lv",game.shBag); S("shop-autosell-lv",game.shAutoSell);
-  S("shop-autoequip-val", game.shAutoEquip?"ON":"OFF");
-  S("shop-regen-lv",game.shRegen); S("shop-traincost-lv",game.shTrainCost);
-  S("shop-dropmax-val", getDropMaxPlus()); S("shop-dropmin-val", getDropMinPlus());
-  [["btn-sh-spd",game.shSpd>=59],["btn-sh-respawn",game.shRespawn>=59],["btn-sh-crit-rate",game.shCritRate>=95],
-   ["btn-sh-autosell",game.shAutoSell>=10],["btn-sh-autoequip",game.shAutoEquip>=1],["btn-sh-traincost",game.shTrainCost>=10]
-  ].forEach(function(x){ var e=$(x[0]); if(e) e.disabled=x[1]; });
-
-  var frames=Math.max(1,60-game.shSpd);
-  if(game.build==="tank") frames=Math.floor(frames*2);
-  S("speed-indicator", frames<=1?"最速":(60/frames).toFixed(1)+"/s");
-
-  var pending=isRebirthUnlocked()?calculateCrystals():0;
-  S("pending-crystals-shop", pending);
-  updateRebirthButton();
-
-  renderStages(); renderArts(); renderInv(); updateBuyBtns();
-  $("btn-leave-infinite").style.display=game.inInfinite?"block":"none";
-}
-
-loadGame();
-addLog("⚔ 起動 — 転生はエリア3踏破で解放");
+// boot
+load();
+log("⚔ 起動OK — エリア3クリアで転生解放");
 rollEnemy();
-startTimers();
-startRegen();
-updateUI();
-checkAchievements();
+timers();
+regen();
+ui();
+checkAch();
 })();
 </script>
 </body>
